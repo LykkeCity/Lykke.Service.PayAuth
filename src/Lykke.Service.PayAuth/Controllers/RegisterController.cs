@@ -2,7 +2,9 @@
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Common.Log;
 using Lykke.Common.Api.Contract.Responses;
+using Lykke.Common.Extensions;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +16,11 @@ namespace Lykke.Service.PayAuth.Controllers
     public class RegisterController : Controller
     {
         private readonly IPayAuthService _payAuthService;
-        public RegisterController(IPayAuthService payAuthService)
+        private readonly ILog _log;
+        public RegisterController(IPayAuthService payAuthService, ILog log)
         {
             _payAuthService = payAuthService;
+            _log = log;
         }
         [HttpPost]
         [SwaggerOperation("Register")]
@@ -25,21 +29,23 @@ namespace Lykke.Service.PayAuth.Controllers
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Register(string systemId, string clientId, string apiKey, string certificate)
         {
-            try
+            var model = new NewPayAuthModel
             {
-                var model = new NewPayAuthModel
-                {
-                    ClientId = clientId,
-                    SystemId = systemId,
-                    ApiKey = apiKey,
-                    Certificate = certificate
-                };
+                Id = Guid.NewGuid().ToString(),
+                ClientId = clientId,
+                SystemId = systemId,
+                ApiKey = apiKey,
+                Certificate = certificate
+            };
+            try
+            {  
                 var sign = Mapper.Map<Core.Domain.PayAuth>(model);
                 await _payAuthService.AddAsync(sign);
             }
             catch (Exception exception)
             {
-                return BadRequest(ErrorResponse.Create(exception.Message));
+                await _log.WriteInfoAsync(nameof(RegisterController), nameof(Register), model.Id, exception.Message);
+                return StatusCode(500);
             }
             return NoContent();
         }

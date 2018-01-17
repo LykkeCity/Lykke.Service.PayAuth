@@ -31,8 +31,11 @@ namespace Lykke.Service.PayAuth.Controllers
         public async Task<SecurityErrorType> VerifySignature(string text, string signature, string systemId, string clientId)
         {
             var auth = await _payAuthService.GetAsync(clientId, systemId);
-            return _securityHelper.CheckRequest(text, clientId, signature, auth.Certificate, auth.ApiKey);
-
+            if (auth != null)
+            {
+                return _securityHelper.CheckRequest(text, clientId, signature, auth.Certificate, auth.ApiKey);
+            }
+            return SecurityErrorType.SignIncorrect;
         }
     }
 }

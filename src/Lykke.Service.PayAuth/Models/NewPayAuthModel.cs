@@ -8,6 +8,7 @@ namespace Lykke.Service.PayAuth.Models
     public class NewPayAuthModel
     {
         [Required]
+        public string Id { get; set; }
         public string SystemId { get; set; }
         public string ClientId { get; set; }
         public string ApiKey { get; set; }
