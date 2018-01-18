@@ -21,10 +21,6 @@ namespace Lykke.Service.PayAuth.Services
 
         public async Task AddAsync(IPayAuth payauth)
         {
-            //if (await _payAuthRepository.GetAsync(payauth.Id) != null)
-            //{
-            //    throw new ServiceException("already exists.");
-            //}
             await _payAuthRepository.AddAsync(payauth);
         }
 
