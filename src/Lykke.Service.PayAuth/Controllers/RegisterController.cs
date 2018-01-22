@@ -22,20 +22,20 @@ namespace Lykke.Service.PayAuth.Controllers
             _payAuthService = payAuthService;
             _log = log;
         }
-        [HttpPost]
+        [HttpPost("register")]
         [SwaggerOperation("Register")]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Register(string systemId, string clientId, string apiKey, string certificate)
+        public async Task<IActionResult> Register([FromBody]PayAuthModel request)
         {
             var model = new NewPayAuthModel
             {
                 Id = Guid.NewGuid().ToString(),
-                ClientId = clientId,
-                SystemId = systemId,
-                ApiKey = apiKey,
-                Certificate = certificate
+                ClientId = request.ClientId,
+                SystemId = request.SystemId,
+                ApiKey = request.ApiKey,
+                Certificate = request.Certificate
             };
             try
             {  

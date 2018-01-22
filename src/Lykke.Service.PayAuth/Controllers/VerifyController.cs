@@ -10,6 +10,7 @@ using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Lykke.Service.PayAuth.Models;
 
 namespace Lykke.Service.PayAuth.Controllers
 {
@@ -23,17 +24,17 @@ namespace Lykke.Service.PayAuth.Controllers
             _securityHelper = securityHelper;
             _payAuthService = payAuthService;
         }
-        [HttpGet("signature")]
+        [HttpPost("signature")]
         [SwaggerOperation("VerifySignature")]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        public async Task<SecurityErrorType> VerifySignature(string text, string signature, string systemId, string clientId)
+        public async Task<SecurityErrorType> VerifySignature([FromBody]VerifyModel request)
         {
-            var auth = await _payAuthService.GetAsync(clientId, systemId);
+            var auth = await _payAuthService.GetAsync(request.ClientId, request.SystemId);
             if (auth != null)
             {
-                return _securityHelper.CheckRequest(text, clientId, signature, auth.Certificate, auth.ApiKey);
+                return _securityHelper.CheckRequest(request.Text, request.ClientId, request.Signature, auth.Certificate, auth.ApiKey);
             }
             return SecurityErrorType.SignIncorrect;
         }
