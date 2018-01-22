@@ -22,7 +22,7 @@ namespace Lykke.Service.PayAuth.Controllers
             _payAuthService = payAuthService;
             _log = log;
         }
-        [HttpPost("register")]
+        [HttpPost("client")]
         [SwaggerOperation("Register")]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
