@@ -7,7 +7,7 @@ namespace Lykke.Service.PayAuth.Client.Api
 {
     internal interface IPayAuthApi
     {
-        [Post("/api/register/client")]
+        [Post("/api/register")]
         Task RegisterAsync([Body] RegisterRequest request);
 
         [Post("/api/verify/signature")]
