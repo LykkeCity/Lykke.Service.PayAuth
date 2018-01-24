@@ -2,10 +2,14 @@
 {
     public interface IEmployeeCredentials
     {
-        string Email { get; set; }
+        string EmployeeId { get; }
         
-        string Password { get; set; }
+        string MerchantId { get; }
         
-        string Salt { get; set; }
+        string Email { get; }
+        
+        string Password { get; }
+        
+        string Salt { get; }
     }
 }

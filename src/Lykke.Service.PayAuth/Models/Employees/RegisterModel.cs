@@ -5,6 +5,12 @@ namespace Lykke.Service.PayAuth.Models.Employees
     public class RegisterModel
     {
         [Required]
+        public string EmployeeId { get; set; }
+        
+        [Required]
+        public string MerchantId { get; set; }
+        
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
         

@@ -6,6 +6,7 @@ using Common.Log;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Repositories;
 using Lykke.Service.PayAuth.Core.Services;
+using Lykke.Service.PayAuth.Core.Utils;
 
 namespace Lykke.Service.PayAuth.Services
 {
@@ -20,33 +21,47 @@ namespace Lykke.Service.PayAuth.Services
             _log = log;
         }
         
-        public async Task RegisterAsync(string email, string password)
+        public async Task RegisterAsync(IEmployeeCredentials employeeCredentials)
         {
-            IEmployeeCredentials credentials = await _repository.GetAsync(email);
+            IEmployeeCredentials credentials = await _repository.GetAsync(employeeCredentials.Email);
             
             if(credentials != null)
                 throw new InvalidOperationException("Employee with same email already exists.");
             
             string salt = Guid.NewGuid().ToString();
-            string hash = CalculateHash(password, salt);
+            string hash = CalculateHash(employeeCredentials.Password, salt);
 
-            await _repository.InsertOrReplaceAsync(new EmployeeCredentials(email, hash, salt));
+            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
+            {
+                MerchantId = employeeCredentials.MerchantId,
+                EmployeeId = employeeCredentials.EmployeeId,
+                Email = employeeCredentials.Email,
+                Password = hash,
+                Salt = salt
+            });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
-                new { Email = email.SanitizeEmail()}.ToString(),
+                employeeCredentials.MerchantId
+                    .ToContext(nameof(employeeCredentials.MerchantId))
+                    .ToContext(nameof(employeeCredentials.EmployeeId), employeeCredentials.EmployeeId)
+                    .ToContext(nameof(employeeCredentials.Email), employeeCredentials.Email.SanitizeEmail())
+                    .ToJson(),
                 "Employee credentials registered.");
         }
 
-        public async Task<bool> ValidateAsync(string email, string password)
+        public async Task<IEmployeeCredentials> ValidateAsync(string email, string password)
         {
             IEmployeeCredentials credentials = await _repository.GetAsync(email);
 
             if (credentials == null)
-                return false;
+                return null;
             
             string hash = CalculateHash(password, credentials.Salt);
 
-            return credentials.Password.Equals(hash);
+            if (credentials.Password.Equals(hash))
+                return credentials;
+
+            return null;
         }
 
         public async Task DeleteAsync(string email)
