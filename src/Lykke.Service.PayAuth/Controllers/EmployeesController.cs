@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Common;
 using Common.Log;
 using Lykke.Common.Api.Contract.Responses;
+using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Services;
+using Lykke.Service.PayAuth.Core.Utils;
 using Lykke.Service.PayAuth.Extensions;
 using Lykke.Service.PayAuth.Models.Employees;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +39,7 @@ namespace Lykke.Service.PayAuth.Controllers
         [Route("")]
         [SwaggerOperation("EmployeesRegister")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterModel model)
         {
             if (!ModelState.IsValid)
@@ -44,12 +47,18 @@ namespace Lykke.Service.PayAuth.Controllers
 
             try
             {
-                await _employeeCredentialsService.RegisterAsync(model.Email, model.Password);
+                var credentials = Mapper.Map<EmployeeCredentials>(model);
+                
+                await _employeeCredentialsService.RegisterAsync(credentials);
             }
             catch (InvalidOperationException exception)
             {
                 await _log.WriteWarningAsync(nameof(EmployeesController), nameof(RegisterAsync),
-                    new {Email = model.Email.SanitizeEmail()}.ToString(),
+                    model.MerchantId
+                        .ToContext(nameof(model.MerchantId))
+                        .ToContext(nameof(model.EmployeeId), model.EmployeeId)
+                        .ToContext(nameof(model.Email), model.Email.SanitizeEmail())
+                        .ToJson(),
                     exception.Message);
                 
                 return BadRequest(ErrorResponse.Create(exception.Message));
@@ -67,16 +76,24 @@ namespace Lykke.Service.PayAuth.Controllers
         [HttpGet]
         [Route("")]
         [SwaggerOperation("EmployeesValidate")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidateResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ValidateAsync([FromQuery] ValidationModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ErrorResponse().AddErrors(ModelState));
-            
-            bool result = await _employeeCredentialsService.ValidateAsync(model.Email, model.Password);
 
-            return Ok(new ValidateResultModel(result));
+            IEmployeeCredentials employeeCredentials =
+                await _employeeCredentialsService.ValidateAsync(model.Email, model.Password);
+
+            if(employeeCredentials == null)
+                return Ok(new ValidateResultModel(false));
+            
+            return Ok(new ValidateResultModel(true)
+            {
+                MerchantId = employeeCredentials.MerchantId,
+                EmployeeId = employeeCredentials.EmployeeId
+            });
         }
     }
 }

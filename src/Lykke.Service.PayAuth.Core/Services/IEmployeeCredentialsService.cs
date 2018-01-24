@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
+using Lykke.Service.PayAuth.Core.Domain;
 
 namespace Lykke.Service.PayAuth.Core.Services
 {
     public interface IEmployeeCredentialsService
     {
-        Task RegisterAsync(string email, string password);
+        Task RegisterAsync(IEmployeeCredentials employeeCredentials);
         
-        Task<bool> ValidateAsync(string email, string password);
+        Task<IEmployeeCredentials> ValidateAsync(string email, string password);
         
         Task DeleteAsync(string email);
     }
