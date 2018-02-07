@@ -13,7 +13,6 @@ using Lykke.Service.PayAuth.Core.Settings;
 using Lykke.Service.PayAuth.Modules;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

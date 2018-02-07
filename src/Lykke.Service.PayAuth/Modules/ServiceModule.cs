@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using Common.Log;
 using Lykke.Service.PayAuth.AzureRepositories;
+using Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials;
 using Lykke.Service.PayAuth.Core;
 using Lykke.Service.PayAuth.Core.Repositories;
 using Lykke.Service.PayAuth.Core.Services;
@@ -45,6 +46,9 @@ namespace Lykke.Service.PayAuth.Modules
             builder.RegisterType<SecurityHelper>()
                 .As<ISecurityHelper>();
 
+            builder.RegisterType<EmployeeCredentialsService>()
+                .As<IEmployeeCredentialsService>();
+            
             builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
@@ -63,10 +67,17 @@ namespace Lykke.Service.PayAuth.Modules
         private void RegisterRepositories(ContainerBuilder builder)
         {
             const string payauthTableName = "PayAuthSignature";
+            const string employeeCredentialsTableName = "EmployeeCredentials";
+            
             builder.Register(c => new PayAuthRepository(
                     AzureTableStorage<PayAuthEntity>.Create(_settings.ConnectionString(x => x.Db.DataConnString),
                         payauthTableName, _log)))
                 .As<IPayAuthRepository>();
+            
+            builder.Register(c => new EmployeeCredentialsRepository(
+                    AzureTableStorage<EmployeeCredentialsEntity>.Create(_settings.ConnectionString(x => x.Db.DataConnString),
+                        employeeCredentialsTableName, _log)))
+                .As<IEmployeeCredentialsRepository>();
         }
     }
 }

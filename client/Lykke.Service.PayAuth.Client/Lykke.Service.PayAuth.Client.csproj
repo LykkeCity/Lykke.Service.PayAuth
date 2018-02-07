@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>1.0.1</Version>
@@ -15,34 +14,15 @@
     <PackageTags>Lykke</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="AutofacExtension.cs" />
-    <Compile Remove="AutorestClientMapper.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="autorest-vs.ps1" />
-    <None Remove="autorest.ps1" />
-    <None Remove="autorest.sh" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="4.0.0" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.10" />
     <PackageReference Include="Refit" Version="4.1.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="AutorestClient\" />
-  </ItemGroup>
-
 </Project>

@@ -1,15 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Lykke.Service.PayAuth.Core</AssemblyName>
     <RootNamespace>Lykke.Service.PayAuth.Core</RootNamespace>
     <Version>1.0.0</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="4.0.0" />
     <PackageReference Include="Lykke.Common.Entities" Version="1.0.34" />
   </ItemGroup>
-
 </Project>
