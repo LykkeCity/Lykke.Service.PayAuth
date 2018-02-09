@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.PayAuth.Core.Domain;
+using Lykke.Service.PayAuth.Core.Exceptions;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Core.Repositories;
 
 namespace Lykke.Service.PayAuth.Services
 {
-
     public class PayAuthService : IPayAuthService
     {
         private readonly IPayAuthRepository _payAuthRepository;
+
         public PayAuthService(
-            IPayAuthRepository payAuthRepository
-        )
+            IPayAuthRepository payAuthRepository)
         {
-            _payAuthRepository = payAuthRepository;
+            _payAuthRepository = payAuthRepository ?? throw new ArgumentNullException(nameof(payAuthRepository));
         }
 
         public async Task AddAsync(IPayAuth payauth)
@@ -26,7 +24,12 @@ namespace Lykke.Service.PayAuth.Services
 
         public async Task<IPayAuth> GetAsync(string clientId, string systemId)
         {
-            return await _payAuthRepository.GetAsync(clientId, systemId);
+            var client = await _payAuthRepository.GetAsync(clientId, systemId);
+
+            if(client == null)
+                throw new ClientNotFoundException(clientId);
+
+            return client;
         }
     }
 }
