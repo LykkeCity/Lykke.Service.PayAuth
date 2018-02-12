@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using AutoMapper;
+using Common;
+using Common.Log;
 using Lykke.Common.Api.Contract.Responses;
 using Lykke.Common.Entities.Security;
-using Lykke.Common.Extensions;
 using Lykke.Service.PayAuth.Core;
 using Lykke.Service.PayAuth.Core.Domain;
+using Lykke.Service.PayAuth.Core.Exceptions;
 using Lykke.Service.PayAuth.Core.Services;
+using Lykke.Service.PayAuth.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Lykke.Service.PayAuth.Models;
@@ -19,24 +21,53 @@ namespace Lykke.Service.PayAuth.Controllers
     {
         private readonly ISecurityHelper _securityHelper;
         private readonly IPayAuthService _payAuthService;
-        public VerifyController(ISecurityHelper securityHelper, IPayAuthService payAuthService)
+        private readonly ILog _log;
+
+        public VerifyController(
+            ISecurityHelper securityHelper, 
+            IPayAuthService payAuthService, 
+            ILog log)
         {
-            _securityHelper = securityHelper;
-            _payAuthService = payAuthService;
+            _securityHelper = securityHelper ?? throw new ArgumentNullException(nameof(securityHelper));
+            _payAuthService = payAuthService ?? throw new ArgumentNullException(nameof(payAuthService));
+            _log = log ?? throw new ArgumentNullException(nameof(log));
         }
+
+        /// <summary>
+        /// Verifies signature against clientId provided
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("signature")]
         [SwaggerOperation("VerifySignature")]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        public async Task<SecurityErrorType> VerifySignature([FromBody]VerifyModel request)
+        [ValidateModel]
+        [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(void), (int) HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(SecurityErrorType), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> VerifySignature([FromBody] VerifyModel request)
         {
-            var auth = await _payAuthService.GetAsync(request.ClientId, request.SystemId);
-            if (auth != null)
+            try
             {
-                return _securityHelper.CheckRequest(request.Text, request.ClientId, request.Signature, auth.Certificate, auth.ApiKey);
+                IPayAuth payAuth = await _payAuthService.GetAsync(request.ClientId, request.SystemId);
+
+                var validationResult = _securityHelper.CheckRequest(request.Text, request.ClientId, request.Signature,
+                    payAuth.Certificate, payAuth.ApiKey);
+
+                return Ok(validationResult);
             }
-            return SecurityErrorType.SignIncorrect;
+            catch (ClientNotFoundException ex)
+            {
+                await _log.WriteErrorAsync(nameof(VerifyController), nameof(VerifySignature), request.ToJson(), ex);
+
+                return NotFound(ErrorResponse.Create(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(VerifyController), nameof(VerifySignature), request.ToJson(), ex);
+            }
+
+            return StatusCode((int) HttpStatusCode.InternalServerError);
         }
     }
 }
