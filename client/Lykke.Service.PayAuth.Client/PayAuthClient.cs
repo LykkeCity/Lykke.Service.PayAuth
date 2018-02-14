@@ -49,7 +49,7 @@ namespace Lykke.Service.PayAuth.Client
             await _runner.RunAsync(() => _payAuthApi.RegisterAsync(request));
         }
 
-        public async Task<string> VerifyAsync(VerifyRequest request)
+        public async Task<SignatureValidationResponse> VerifyAsync(VerifyRequest request)
         {
             return await _runner.RunAsync(() => _payAuthApi.VerifyAsync(request));
         }
