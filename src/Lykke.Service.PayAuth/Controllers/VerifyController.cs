@@ -43,7 +43,7 @@ namespace Lykke.Service.PayAuth.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(void), (int) HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(SecurityErrorType), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(SignatureValidationResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> VerifySignature([FromBody] VerifyModel request)
         {
@@ -54,7 +54,7 @@ namespace Lykke.Service.PayAuth.Controllers
                 var validationResult = _securityHelper.CheckRequest(request.Text, request.ClientId, request.Signature,
                     payAuth.Certificate, payAuth.ApiKey);
 
-                return Ok(validationResult);
+                return Ok(new SignatureValidationResponse {Result = validationResult.ToString()});
             }
             catch (ClientNotFoundException ex)
             {

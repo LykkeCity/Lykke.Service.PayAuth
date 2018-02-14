@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Refit;
 using Lykke.Service.PayAuth.Client.Models;
 
@@ -11,6 +10,6 @@ namespace Lykke.Service.PayAuth.Client.Api
         Task RegisterAsync([Body] RegisterRequest request);
 
         [Post("/api/verify/signature")]
-        Task<string> VerifyAsync([Body] VerifyRequest request);
+        Task<SignatureValidationResponse> VerifyAsync([Body] VerifyRequest request);
     }
 }
