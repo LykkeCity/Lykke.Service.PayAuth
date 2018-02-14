@@ -54,7 +54,7 @@ namespace Lykke.Service.PayAuth.Controllers
                 var validationResult = _securityHelper.CheckRequest(request.Text, request.ClientId, request.Signature,
                     payAuth.Certificate, payAuth.ApiKey);
 
-                return Ok(new SignatureValidationResponse {Result = validationResult.ToString()});
+                return Ok(new SignatureValidationResponse {Description = validationResult.ToString(), ErrorType = validationResult});
             }
             catch (ClientNotFoundException ex)
             {
