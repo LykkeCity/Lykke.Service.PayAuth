@@ -2,6 +2,7 @@
 {
     public class SignatureValidationResponse
     {
-        public string Result { get; set; }
+        public string Description { get; set; }
+        public string ErrorType { get; set; }
     }
 }
