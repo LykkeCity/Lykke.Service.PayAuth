@@ -8,7 +8,13 @@ namespace Lykke.Service.PayAuth.Client
     public interface IPayAuthClient
     {
         Task RegisterAsync(RegisterRequest request);
-        Task<string> VerifyAsync(VerifyRequest request);
+
+        /// <summary>
+        /// Validates signature
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Task<SignatureValidationResponse> VerifyAsync(VerifyRequest request);
 
         /// <summary>
         /// Registers an employee credentials.
