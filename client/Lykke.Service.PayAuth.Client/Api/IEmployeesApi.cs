@@ -8,7 +8,9 @@ namespace Lykke.Service.PayAuth.Client.Api
     {
         [Post("/api/employees")]
         Task RegisterAsync([Body] RegisterModel model);
-        
+        [Post("/api/employees/update")]
+        Task UpdateAsync([Body] RegisterModel model);
+
         [Get("/api/employees")]
         Task<ValidateResultModel> ValidateAsync(string email, string password);
     }
