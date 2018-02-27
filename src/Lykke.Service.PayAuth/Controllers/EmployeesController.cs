@@ -66,7 +66,44 @@ namespace Lykke.Service.PayAuth.Controllers
 
             return NoContent();
         }
-        
+        /// <summary>
+        /// Update an employee credentials.
+        /// </summary>
+        /// <param name="model">The employee credentials.</param>
+        /// <response code="204">The employee credentials successfully updated.</response>
+        /// <response code="400">Invalid model.</response>
+        [HttpPost]
+        [Route("update")]
+        [SwaggerOperation("EmployeesUpdate")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateAsync([FromBody] RegisterModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ErrorResponse().AddErrors(ModelState));
+
+            try
+            {
+                var credentials = Mapper.Map<EmployeeCredentials>(model);
+
+                await _employeeCredentialsService.UpdateAsync(credentials);
+            }
+            catch (InvalidOperationException exception)
+            {
+                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(RegisterAsync),
+                    model.MerchantId
+                        .ToContext(nameof(model.MerchantId))
+                        .ToContext(nameof(model.EmployeeId), model.EmployeeId)
+                        .ToContext(nameof(model.Email), model.Email.SanitizeEmail())
+                        .ToJson(),
+                    exception.Message);
+
+                return BadRequest(ErrorResponse.Create(exception.Message));
+            }
+
+            return NoContent();
+        }
+
         /// <summary>
         /// Validates employee credentials.
         /// </summary>

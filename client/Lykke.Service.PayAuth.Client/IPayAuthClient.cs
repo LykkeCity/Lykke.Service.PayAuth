@@ -21,6 +21,12 @@ namespace Lykke.Service.PayAuth.Client
         /// </summary>
         /// <param name="model">The registration details.</param>
         Task RegisterAsync(RegisterModel model);
+        /// <summary>
+        /// Update an employee password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task UpdateAsync(RegisterModel model);
 
         /// <summary>
         /// Validates employee credentials.
