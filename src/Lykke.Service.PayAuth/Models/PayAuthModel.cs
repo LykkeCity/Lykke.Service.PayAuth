@@ -13,10 +13,8 @@ namespace Lykke.Service.PayAuth.Models
         [Required]
         public string ClientId { get; set; }
 
-        [Required]
         public string ApiKey { get; set; }
 
-        [Required]
         public string Certificate { get; set; }
     }
 }
