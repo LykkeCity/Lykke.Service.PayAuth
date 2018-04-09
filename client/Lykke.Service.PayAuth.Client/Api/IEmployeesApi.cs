@@ -4,11 +4,14 @@ using Refit;
 
 namespace Lykke.Service.PayAuth.Client.Api
 {
-    public interface IEmployeesApi
+    internal interface IEmployeesApi
     {
         [Post("/api/employees")]
         Task RegisterAsync([Body] RegisterModel model);
-        
+
+        [Put("/api/employees")]
+        Task UpdateAsync([Body] UpdateCredentialsModel model);
+
         [Get("/api/employees")]
         Task<ValidateResultModel> ValidateAsync(string email, string password);
     }

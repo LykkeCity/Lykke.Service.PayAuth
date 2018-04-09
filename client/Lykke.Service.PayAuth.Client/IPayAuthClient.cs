@@ -1,12 +1,18 @@
-﻿
-using Lykke.Service.PayAuth.Client.Models;
+﻿using Lykke.Service.PayAuth.Client.Models;
 using System.Threading.Tasks;
 using Lykke.Service.PayAuth.Client.Models.Employees;
 
 namespace Lykke.Service.PayAuth.Client
 {
+    /// <summary>
+    /// HTTP client for pay auth service.
+    /// </summary>
     public interface IPayAuthClient
     {
+        /// <summary>
+        /// Registers new client.
+        /// </summary>
+        /// <param name="request">The registration details.</param>
         Task RegisterAsync(RegisterRequest request);
 
         /// <summary>
@@ -21,6 +27,12 @@ namespace Lykke.Service.PayAuth.Client
         /// </summary>
         /// <param name="model">The registration details.</param>
         Task RegisterAsync(RegisterModel model);
+        
+        /// <summary>
+        /// Updates an employee credentials.
+        /// </summary>
+        /// <param name="model">The employee credentials.</param>
+        Task UpdateAsync(UpdateCredentialsModel model);
 
         /// <summary>
         /// Validates employee credentials.
