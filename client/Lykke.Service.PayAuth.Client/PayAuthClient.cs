@@ -54,29 +54,16 @@ namespace Lykke.Service.PayAuth.Client
             return await _runner.RunAsync(() => _payAuthApi.VerifyAsync(request));
         }
 
-        /// <summary>
-        /// Registers an employee credentials.
-        /// </summary>
-        /// <param name="model">The registration details.</param>
         public async Task RegisterAsync(RegisterModel model)
         {
             await _runner.RunAsync(() => _employeesApi.RegisterAsync(model));
         }
-        /// <summary>
-        /// Update an employee credentials
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public async Task UpdateAsync(RegisterModel model)
+
+        public async Task UpdateAsync(UpdateCredentialsModel model)
         {
             await _runner.RunAsync(() => _employeesApi.UpdateAsync(model));
         }
-        /// <summary>
-        /// Validates employee credentials.
-        /// </summary>
-        /// <param name="email">The employee email.</param>
-        /// <param name="password">The employee password.</param>
-        /// <returns>The validation result.</returns>
+
         public async Task<ValidateResultModel> ValidateAsync(string email, string password)
         {
             return await _runner.RunAsync(() => _employeesApi.ValidateAsync(email, password));

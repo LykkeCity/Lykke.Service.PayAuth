@@ -48,31 +48,33 @@ namespace Lykke.Service.PayAuth.Services
                     .ToJson(),
                 "Employee credentials registered.");
         }
+        
         public async Task UpdateAsync(IEmployeeCredentials employeeCredentials)
         {
             IEmployeeCredentials credentials = await _repository.GetAsync(employeeCredentials.Email);
-            if (credentials != null)
+
+            if (credentials == null)
+                throw new InvalidOperationException("Employee does not exist.");
+
+            string salt = Guid.NewGuid().ToString();
+            string hash = CalculateHash(employeeCredentials.Password, salt);
+
+            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
             {
-                string salt = Guid.NewGuid().ToString();
-                string hash = CalculateHash(employeeCredentials.Password, salt);
+                MerchantId = employeeCredentials.MerchantId,
+                EmployeeId = employeeCredentials.EmployeeId,
+                Email = employeeCredentials.Email,
+                Password = hash,
+                Salt = salt
+            });
 
-                await _repository.InsertOrReplaceAsync(new EmployeeCredentials
-                {
-                    MerchantId = employeeCredentials.MerchantId,
-                    EmployeeId = employeeCredentials.EmployeeId,
-                    Email = employeeCredentials.Email,
-                    Password = hash,
-                    Salt = salt
-                });
-
-                await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(UpdateAsync),
-                    employeeCredentials.MerchantId
-                        .ToContext(nameof(employeeCredentials.MerchantId))
-                        .ToContext(nameof(employeeCredentials.EmployeeId), employeeCredentials.EmployeeId)
-                        .ToContext(nameof(employeeCredentials.Email), employeeCredentials.Email.SanitizeEmail())
-                        .ToJson(),
-                    "Employee credentials updated.");
-            }
+            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
+                employeeCredentials.MerchantId
+                    .ToContext(nameof(employeeCredentials.MerchantId))
+                    .ToContext(nameof(employeeCredentials.EmployeeId), employeeCredentials.EmployeeId)
+                    .ToContext(nameof(employeeCredentials.Email), employeeCredentials.Email.SanitizeEmail())
+                    .ToJson(),
+                "Employee credentials updated.");
         }
 
         public async Task<IEmployeeCredentials> ValidateAsync(string email, string password)
