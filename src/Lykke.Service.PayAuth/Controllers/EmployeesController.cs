@@ -73,7 +73,7 @@ namespace Lykke.Service.PayAuth.Controllers
         /// <response code="204">The employee credentials successfully updated.</response>
         /// <response code="400">Invalid model.</response>
         [HttpPut]
-        [SwaggerOperation("EmployeesRegister")]
+        [SwaggerOperation("EmployeesUpdate")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateAsync([FromBody] UpdateCredentialsModel model)
