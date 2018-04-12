@@ -13,6 +13,9 @@ namespace Lykke.Service.PayAuth.Assets.AutoMapperProfiles
 
             CreateMap<RegisterModel, EmployeeCredentials>(MemberList.Destination)
                 .ForMember(dest => dest.Salt, opt => opt.Ignore());
+
+            CreateMap<UpdateCredentialsModel, EmployeeCredentials>(MemberList.Destination)
+                .ForMember(dest => dest.Salt, opt => opt.Ignore());
         }
 
         public override string ProfileName => "Default profile";

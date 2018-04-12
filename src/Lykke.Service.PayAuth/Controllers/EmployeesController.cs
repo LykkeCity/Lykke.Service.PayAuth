@@ -36,7 +36,6 @@ namespace Lykke.Service.PayAuth.Controllers
         /// <response code="204">The employee credentials successfully registered.</response>
         /// <response code="400">Invalid model.</response>
         [HttpPost]
-        [Route("")]
         [SwaggerOperation("EmployeesRegister")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
@@ -66,7 +65,44 @@ namespace Lykke.Service.PayAuth.Controllers
 
             return NoContent();
         }
-        
+
+        /// <summary>
+        /// Updates an employee credentials.
+        /// </summary>
+        /// <param name="model">The employee credentials.</param>
+        /// <response code="204">The employee credentials successfully updated.</response>
+        /// <response code="400">Invalid model.</response>
+        [HttpPut]
+        [SwaggerOperation("EmployeesUpdate")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateCredentialsModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ErrorResponse().AddErrors(ModelState));
+
+            try
+            {
+                var credentials = Mapper.Map<EmployeeCredentials>(model);
+
+                await _employeeCredentialsService.UpdateAsync(credentials);
+            }
+            catch (InvalidOperationException exception)
+            {
+                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(UpdateAsync),
+                    model.MerchantId
+                        .ToContext(nameof(model.MerchantId))
+                        .ToContext(nameof(model.EmployeeId), model.EmployeeId)
+                        .ToContext(nameof(model.Email), model.Email.SanitizeEmail())
+                        .ToJson(),
+                    exception.Message);
+
+                return BadRequest(ErrorResponse.Create(exception.Message));
+            }
+
+            return NoContent();
+        }
+
         /// <summary>
         /// Validates employee credentials.
         /// </summary>
@@ -74,7 +110,6 @@ namespace Lykke.Service.PayAuth.Controllers
         /// <response code="200">The employee credentias validation result.</response>
         /// <response code="400">Invalid model.</response>
         [HttpGet]
-        [Route("")]
         [SwaggerOperation("EmployeesValidate")]
         [ProducesResponseType(typeof(ValidateResultModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
