@@ -7,6 +7,7 @@ using System.Net.Http;
 using Lykke.Service.PayAuth.Client.Models.Employees;
 using Microsoft.Extensions.PlatformAbstractions;
 using Refit;
+using System.Threading;
 
 namespace Lykke.Service.PayAuth.Client
 {
@@ -44,29 +45,29 @@ namespace Lykke.Service.PayAuth.Client
             _runner = new ApiRunner();
         }
 
-        public async Task RegisterAsync(RegisterRequest request)
+        public Task RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await _runner.RunAsync(() => _payAuthApi.RegisterAsync(request));
+            return _runner.RunAsync(() => _payAuthApi.RegisterAsync(request, cancellationToken));
         }
 
-        public async Task<SignatureValidationResponse> VerifyAsync(VerifyRequest request)
+        public Task<SignatureValidationResponse> VerifyAsync(VerifyRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await _runner.RunAsync(() => _payAuthApi.VerifyAsync(request));
+            return _runner.RunAsync(() => _payAuthApi.VerifyAsync(request, cancellationToken));
         }
 
-        public async Task RegisterAsync(RegisterModel model)
+        public Task RegisterAsync(RegisterModel model, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await _runner.RunAsync(() => _employeesApi.RegisterAsync(model));
+            return _runner.RunAsync(() => _employeesApi.RegisterAsync(model, cancellationToken));
         }
 
-        public async Task UpdateAsync(UpdateCredentialsModel model)
+        public Task UpdateAsync(UpdateCredentialsModel model, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await _runner.RunAsync(() => _employeesApi.UpdateAsync(model));
+            return _runner.RunAsync(() => _employeesApi.UpdateAsync(model, cancellationToken));
         }
 
-        public async Task<ValidateResultModel> ValidateAsync(string email, string password)
+        public Task<ValidateResultModel> ValidateAsync(string email, string password, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await _runner.RunAsync(() => _employeesApi.ValidateAsync(email, password));
+            return _runner.RunAsync(() => _employeesApi.ValidateAsync(email, password, cancellationToken));
         }
 
         public void Dispose()
