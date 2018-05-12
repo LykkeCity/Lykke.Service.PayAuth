@@ -8,6 +8,10 @@ using Common.Log;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.Logs;
+
+// ReSharper disable once RedundantUsingDirective
+using Lykke.MonitoringServiceApiCaller;
+
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Core.Settings;
 using Lykke.Service.PayAuth.Modules;
@@ -26,6 +30,9 @@ namespace Lykke.Service.PayAuth
         public IContainer ApplicationContainer { get; private set; }
         public IConfigurationRoot Configuration { get; }
         public ILog Log { get; private set; }
+
+        // ReSharper disable once NotAccessedField.Local
+        private string _monitoringServiceUrl;
 
         public Startup(IHostingEnvironment env)
         {
@@ -58,6 +65,7 @@ namespace Lykke.Service.PayAuth
 
                 var builder = new ContainerBuilder();
                 var appSettings = Configuration.LoadSettings<AppSettings>();
+                _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient?.MonitoringServiceUrl;
 
                 Log = CreateLogWithSlack(services, appSettings);
 
@@ -117,6 +125,11 @@ namespace Lykke.Service.PayAuth
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
                 await Log.WriteMonitorAsync("", $"Env: {Program.EnvInfo}", "Started");
+
+#if !DEBUG
+                if (!string.IsNullOrEmpty(_monitoringServiceUrl))
+                    await AutoRegistrationInMonitoring.RegisterAsync(Configuration, _monitoringServiceUrl, Log);
+#endif
             }
             catch (Exception ex)
             {

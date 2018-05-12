@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Common;
 using Common.Log;
 using Lykke.Common.Api.Contract.Responses;
-using Lykke.Common.Entities.Security;
 using Lykke.Service.PayAuth.Core;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Exceptions;

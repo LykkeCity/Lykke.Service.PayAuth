@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lykke.Service.PayAuth.Core.Domain
+﻿namespace Lykke.Service.PayAuth.Core.Domain
 {
     public interface IPayAuth
     {
