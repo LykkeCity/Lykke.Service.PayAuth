@@ -19,7 +19,7 @@ namespace Lykke.Service.PayAuth.Client.Api
         [Post("/api/employees/password/hash")]
         Task UpdatePasswordHashAsync([Body] UpdatePasswordHashModel model);
 
-        [Post("/api/employees/password/updateMarker")]
+        [Post("/api/employees/password/forceUpdate")]
         Task EnforcePasswordUpdateAsync([Body] EnforcePasswordUpdateModel model);
 
         [Get("/api/employees/pin")]
