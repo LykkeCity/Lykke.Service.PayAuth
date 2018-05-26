@@ -233,9 +233,9 @@
              It will be <c>null</c> if <see cref="P:Lykke.Service.PayAuth.Client.Models.Employees.ValidateResultModel.Success"/> is <c>false</c>.
              </remarks> 
         </member>
-        <member name="P:Lykke.Service.PayAuth.Client.Models.Employees.ValidateResultModel.UpdatePasswordMarker">
+        <member name="P:Lykke.Service.PayAuth.Client.Models.Employees.ValidateResultModel.ForcePasswordUpdate">
             <summary>
-            Gets or sets updatePassword
+            Gets or sets forcePasswordUpdate flag
             </summary>
             <remarks>
             Means that user password has to be changed

@@ -17,6 +17,6 @@
         
         public string MerchantId { get; set; }
 
-        public bool UpdatePasswordMarker { get; set; }
+        public bool ForcePasswordUpdate { get; set; }
     }
 }

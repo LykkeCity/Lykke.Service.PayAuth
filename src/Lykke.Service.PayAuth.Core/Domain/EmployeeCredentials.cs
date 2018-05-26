@@ -8,6 +8,6 @@
         public string Password { get; set; }
         public string Salt { get; set; }
         public string PinCode { get; set; }
-        public bool UpdatePassword { get; set; }
+        public bool ForcePasswordUpdate { get; set; }
     }
 }
