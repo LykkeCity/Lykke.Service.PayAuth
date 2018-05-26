@@ -28,7 +28,7 @@ namespace Lykke.Service.PayAuth.Services
             if(credentials != null)
                 throw new InvalidOperationException("Employee with same email already exists.");
             
-            string salt = Guid.NewGuid().ToString();
+            string salt = employeeCredentials.Email;
             string hash = CalculateHash(employeeCredentials.Password, salt);
 
             await _repository.InsertOrReplaceAsync(new EmployeeCredentials
@@ -37,7 +37,9 @@ namespace Lykke.Service.PayAuth.Services
                 EmployeeId = employeeCredentials.EmployeeId,
                 Email = employeeCredentials.Email,
                 Password = hash,
-                Salt = salt
+                Salt = salt,
+                PinCode = null,
+                UpdatePassword = employeeCredentials.UpdatePassword
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
@@ -56,7 +58,7 @@ namespace Lykke.Service.PayAuth.Services
             if (credentials == null)
                 throw new InvalidOperationException("Employee does not exist.");
 
-            string salt = Guid.NewGuid().ToString();
+            string salt = employeeCredentials.Email;
             string hash = CalculateHash(employeeCredentials.Password, salt);
 
             await _repository.InsertOrReplaceAsync(new EmployeeCredentials
@@ -65,7 +67,8 @@ namespace Lykke.Service.PayAuth.Services
                 EmployeeId = employeeCredentials.EmployeeId,
                 Email = employeeCredentials.Email,
                 Password = hash,
-                Salt = salt
+                Salt = salt,
+                UpdatePassword = false
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
@@ -77,19 +80,111 @@ namespace Lykke.Service.PayAuth.Services
                 "Employee credentials updated.");
         }
 
-        public async Task<IEmployeeCredentials> ValidateAsync(string email, string password)
+        public async Task UpdatePasswordHashAsync(string email, string hash)
+        {
+            IEmployeeCredentials credentials = await _repository.GetAsync(email);
+
+            if (credentials == null)
+                throw new InvalidOperationException("Employee does not exist.");
+
+            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
+            {
+                MerchantId = credentials.MerchantId,
+                EmployeeId = credentials.EmployeeId,
+                Email = credentials.Email,
+                PinCode = credentials.PinCode,
+                Salt = credentials.Salt,
+                Password = hash,
+                UpdatePassword = false
+            });
+
+            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(UpdatePasswordHashAsync),
+                credentials.MerchantId
+                    .ToContext(nameof(credentials.MerchantId))
+                    .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)
+                    .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail())
+                    .ToJson(),
+                "Employee password updated.");
+        }
+
+        public async Task UpdatePinHashAsync(string email, string hash)
+        {
+            IEmployeeCredentials credentials = await _repository.GetAsync(email);
+
+            if (credentials == null)
+                throw new InvalidOperationException("Employee does not exist.");
+
+            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
+            {
+                MerchantId = credentials.MerchantId,
+                EmployeeId = credentials.EmployeeId,
+                Email = credentials.Email,
+                UpdatePassword = credentials.UpdatePassword,
+                Password = credentials.Password,
+                Salt = credentials.Salt,
+                PinCode = hash
+            });
+
+            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(UpdatePinHashAsync),
+                credentials.MerchantId
+                    .ToContext(nameof(credentials.MerchantId))
+                    .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)
+                    .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail())
+                    .ToJson(),
+                "Employee pin updated.");
+        }
+
+        public async Task EnforcePasswordUpdateAsync(string email)
+        {
+            IEmployeeCredentials credentials = await _repository.GetAsync(email);
+
+            if (credentials == null)
+                throw new InvalidOperationException("Employee does not exist.");
+
+            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
+            {
+                MerchantId = credentials.MerchantId,
+                EmployeeId = credentials.EmployeeId,
+                Email = credentials.Email,
+                Password = credentials.Password,
+                Salt = credentials.Salt,
+                PinCode = credentials.PinCode,
+                UpdatePassword = true
+            });
+
+            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(EnforcePasswordUpdateAsync),
+                credentials.MerchantId
+                    .ToContext(nameof(credentials.MerchantId))
+                    .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)
+                    .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail())
+                    .ToJson(),
+                "Employee first time login flag set.");
+        }
+
+        public async Task<IEmployeeCredentials> ValidatePasswordAsync(string email, string password)
         {
             IEmployeeCredentials credentials = await _repository.GetAsync(email);
 
             if (credentials == null)
                 return null;
-            
-            string hash = CalculateHash(password, credentials.Salt);
 
-            if (credentials.Password.Equals(hash))
-                return credentials;
+            bool passed = credentials.Password.Equals(password) ||
+                          credentials.Password.Equals(CalculateHash(password, credentials.Salt));
 
-            return null;
+            return passed ? credentials : null;
+        }
+
+        public async Task<IEmployeeCredentials> ValidatePinAsync(string email, string pin)
+        {
+            IEmployeeCredentials credentials = await _repository.GetAsync(email);
+
+            if (credentials == null)
+                return null;
+
+            bool passed = credentials.PinCode.Equals(pin) ||
+                          credentials.PinCode.Equals(CalculateHash(pin, credentials.Salt));
+
+            return passed ? credentials : null;
         }
 
         public async Task DeleteAsync(string email)

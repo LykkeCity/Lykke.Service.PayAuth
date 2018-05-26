@@ -1,12 +1,12 @@
 ﻿namespace Lykke.Service.PayAuth.Models.Employees
 {
-    public class ValidateResultModel
+    public class CredentialsValidationResultModel
     {
-        public ValidateResultModel()
+        public CredentialsValidationResultModel()
         {
         }
 
-        public ValidateResultModel(bool success)
+        public CredentialsValidationResultModel(bool success)
         {
             Success = success;
         }
@@ -16,5 +16,7 @@
         public string EmployeeId { get; set; }
         
         public string MerchantId { get; set; }
+
+        public bool UpdatePasswordMarker { get; set; }
     }
 }

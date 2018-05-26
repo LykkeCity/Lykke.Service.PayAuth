@@ -13,7 +13,19 @@ namespace Lykke.Service.PayAuth.Client.Api
         [Put("/api/employees")]
         Task UpdateAsync([Body] UpdateCredentialsModel model, CancellationToken cancellationToken = default(CancellationToken));
 
-        [Get("/api/employees")]
-        Task<ValidateResultModel> ValidateAsync(string email, string password, CancellationToken cancellationToken = default(CancellationToken));
+        [Get("/api/employees/password")]
+        Task<ValidateResultModel> ValidatePasswordAsync(string email, string password);
+
+        [Post("/api/employees/password/hash")]
+        Task UpdatePasswordHashAsync([Body] UpdatePasswordHashModel model);
+
+        [Post("/api/employees/password/updateMarker")]
+        Task EnforcePasswordUpdateAsync([Body] EnforcePasswordUpdateModel model);
+
+        [Get("/api/employees/pin")]
+        Task<ValidateResultModel> ValidatePinAsync(string email, string pin);
+
+        [Post("/api/employees/pin/hash")]
+        Task UpdatePinHashAsync([Body] UpdatePinHashModel model);
     }
 }

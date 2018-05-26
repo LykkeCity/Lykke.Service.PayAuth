@@ -65,9 +65,29 @@ namespace Lykke.Service.PayAuth.Client
             return _runner.RunAsync(() => _employeesApi.UpdateAsync(model, cancellationToken));
         }
 
-        public Task<ValidateResultModel> ValidateAsync(string email, string password, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<ValidateResultModel> ValidatePasswordAsync(string email, string password)
         {
-            return _runner.RunAsync(() => _employeesApi.ValidateAsync(email, password, cancellationToken));
+            return _runner.RunAsync(() => _employeesApi.ValidatePasswordAsync(email, password));
+        }
+
+        public Task UpdatePasswordHashAsync(UpdatePasswordHashModel model)
+        {
+            return _runner.RunAsync(() => _employeesApi.UpdatePasswordHashAsync(model));
+        }
+
+        public Task EnforcePasswordUpdateAsync(EnforcePasswordUpdateModel model)
+        {
+            return _runner.RunAsync(() => _employeesApi.EnforcePasswordUpdateAsync(model));
+        }
+
+        public Task<ValidateResultModel> ValidatePinAsync(string email, string pin)
+        {
+            return _runner.RunAsync(() => _employeesApi.ValidatePinAsync(email, pin));
+        }
+
+        public Task UpdatePinHashAsync(UpdatePinHashModel model)
+        {
+            return _runner.RunAsync(() => _employeesApi.UpdatePinHashAsync(model));
         }
 
         public void Dispose()

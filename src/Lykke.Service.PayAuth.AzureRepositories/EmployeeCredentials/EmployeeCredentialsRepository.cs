@@ -27,19 +27,25 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
                 EmployeeId = entity.EmployeeId,
                 Email = entity.Email,
                 Password = entity.Password,
-                Salt = entity.Salt
+                Salt = entity.Salt,
+                PinCode = entity.PinCode,
+                UpdatePassword = entity.UpdatePassword
             };
         }
 
         public async Task InsertOrReplaceAsync(IEmployeeCredentials credentials)
         {
-            await _storage.InsertOrReplaceAsync(new EmployeeCredentialsEntity(GetPartitionKey(credentials.Email), GetRowKey())
+            await _storage.InsertOrReplaceAsync(new EmployeeCredentialsEntity
             {
+                PartitionKey = GetPartitionKey(credentials.Email),
+                RowKey = GetRowKey(),
                 MerchantId = credentials.MerchantId,
                 EmployeeId = credentials.EmployeeId,
                 Email = credentials.Email,
                 Password = credentials.Password,
-                Salt = credentials.Salt
+                Salt = credentials.Salt,
+                PinCode = credentials.PinCode,
+                UpdatePassword = credentials.UpdatePassword
             });
         }
        

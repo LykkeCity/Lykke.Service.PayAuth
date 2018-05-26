@@ -9,8 +9,16 @@ namespace Lykke.Service.PayAuth.Core.Services
 
         Task UpdateAsync(IEmployeeCredentials employeeCredentials);
 
-        Task<IEmployeeCredentials> ValidateAsync(string email, string password);
-        
+        Task UpdatePasswordHashAsync(string email, string hash);
+
+        Task UpdatePinHashAsync(string email, string hash);
+
+        Task EnforcePasswordUpdateAsync(string email);
+
+        Task<IEmployeeCredentials> ValidatePasswordAsync(string email, string password);
+
+        Task<IEmployeeCredentials> ValidatePinAsync(string email, string pin);
+
         Task DeleteAsync(string email);
     }
 }
