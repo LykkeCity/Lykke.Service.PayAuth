@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using JetBrains.Annotations;
 using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.PayAuth.Core;
 using Lykke.Service.PayAuth.Core.Domain;
@@ -23,9 +24,9 @@ namespace Lykke.Service.PayAuth.Controllers
         private readonly ILog _log;
 
         public VerifyController(
-            ISecurityHelper securityHelper, 
-            IPayAuthService payAuthService, 
-            ILog log)
+            [NotNull] ISecurityHelper securityHelper,
+            [NotNull] IPayAuthService payAuthService,
+            [NotNull] ILog log)
         {
             _securityHelper = securityHelper ?? throw new ArgumentNullException(nameof(securityHelper));
             _payAuthService = payAuthService ?? throw new ArgumentNullException(nameof(payAuthService));
@@ -44,7 +45,7 @@ namespace Lykke.Service.PayAuth.Controllers
         [ProducesResponseType(typeof(void), (int) HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(SignatureValidationResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> VerifySignature([FromBody] VerifyModel request)
+        public async Task<IActionResult> VerifySignature([FromBody] VerifySignatureModel request)
         {
             try
             {

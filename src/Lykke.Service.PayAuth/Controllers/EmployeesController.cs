@@ -8,7 +8,7 @@ using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Core.Utils;
-using Lykke.Service.PayAuth.Extensions;
+using Lykke.Service.PayAuth.Filters;
 using Lykke.Service.PayAuth.Models.Employees;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -39,11 +39,9 @@ namespace Lykke.Service.PayAuth.Controllers
         [SwaggerOperation("EmployeesRegister")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ErrorResponse().AddErrors(ModelState));
-
             try
             {
                 var credentials = Mapper.Map<EmployeeCredentials>(model);
@@ -76,11 +74,9 @@ namespace Lykke.Service.PayAuth.Controllers
         [SwaggerOperation("EmployeesUpdate")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
         public async Task<IActionResult> UpdateAsync([FromBody] UpdateCredentialsModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ErrorResponse().AddErrors(ModelState));
-
             try
             {
                 var credentials = Mapper.Map<EmployeeCredentials>(model);
@@ -104,31 +100,142 @@ namespace Lykke.Service.PayAuth.Controllers
         }
 
         /// <summary>
-        /// Validates employee credentials.
+        /// Validates employee password.
         /// </summary>
-        /// <param name="model">The employee credentials.</param>
-        /// <response code="200">The employee credentias validation result.</response>
+        /// <param name="model">The employee password.</param>
+        /// <response code="200">The employee password validation result.</response>
         /// <response code="400">Invalid model.</response>
         [HttpGet]
-        [SwaggerOperation("EmployeesValidate")]
-        [ProducesResponseType(typeof(ValidateResultModel), (int)HttpStatusCode.OK)]
+        [Route("password")]
+        [SwaggerOperation(nameof(ValidatePassword))]
+        [ProducesResponseType(typeof(CredentialsValidationResultModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ValidateAsync([FromQuery] ValidationModel model)
+        [ValidateModel]
+        public async Task<IActionResult> ValidatePassword([FromQuery] PasswordValidationModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ErrorResponse().AddErrors(ModelState));
-
             IEmployeeCredentials employeeCredentials =
-                await _employeeCredentialsService.ValidateAsync(model.Email, model.Password);
+                await _employeeCredentialsService.ValidatePasswordAsync(model.Email, model.Password);
 
-            if(employeeCredentials == null)
-                return Ok(new ValidateResultModel(false));
-            
-            return Ok(new ValidateResultModel(true)
+            if (employeeCredentials == null)
+                return Ok(new CredentialsValidationResultModel(false));
+
+            return Ok(new CredentialsValidationResultModel(true)
             {
                 MerchantId = employeeCredentials.MerchantId,
-                EmployeeId = employeeCredentials.EmployeeId
+                EmployeeId = employeeCredentials.EmployeeId,
+                UpdatePasswordMarker = employeeCredentials.UpdatePassword
             });
+        }
+
+        /// <summary>
+        /// Updates an employee password hash
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("password/hash")]
+        [SwaggerOperation(nameof(UpdatePasswordHash))]
+        [ProducesResponseType(typeof(void), (int) HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> UpdatePasswordHash([FromBody] UpdatePasswordHashModel model)
+        {
+            try
+            {
+                await _employeeCredentialsService.UpdatePasswordHashAsync(model.Email, model.PasswordHash);
+            }
+            catch (InvalidOperationException ex)
+            {
+                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(UpdatePasswordHash), model.ToJson(),
+                    ex.Message);
+
+                return BadRequest(ErrorResponse.Create(ex.Message));
+            }
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Marks employee password to be updated
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("password/updateMarker")]
+        [SwaggerOperation(nameof(EnforcePasswordUpdate))]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> EnforcePasswordUpdate([FromBody] EnforcePasswordUpdateModel model)
+        {
+            try
+            {
+                await _employeeCredentialsService.EnforcePasswordUpdateAsync(model.Email);
+            }
+            catch (InvalidOperationException ex)
+            {
+                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(EnforcePasswordUpdate), model.ToJson(),
+                    ex.Message);
+
+                return BadRequest(ErrorResponse.Create(ex.Message));
+            }
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Validates employee pin
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("pin")]
+        [SwaggerOperation(nameof(ValidatePin))]
+        [ProducesResponseType(typeof(CredentialsValidationResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> ValidatePin([FromQuery] PinValidationModel model)
+        {
+            IEmployeeCredentials employeeCredentials =
+                await _employeeCredentialsService.ValidatePinAsync(model.Email, model.Pin);
+
+            if (employeeCredentials == null)
+                return Ok(new CredentialsValidationResultModel(false));
+
+            return Ok(new CredentialsValidationResultModel(true)
+            {
+                MerchantId = employeeCredentials.MerchantId,
+                EmployeeId = employeeCredentials.EmployeeId,
+                UpdatePasswordMarker = employeeCredentials.UpdatePassword
+            });
+        }
+
+        /// <summary>
+        /// Updates an employee pin hash
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("pin/hash")]
+        [SwaggerOperation(nameof(UpdatePinHash))]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> UpdatePinHash([FromBody] UpdatePinHashModel model)
+        {
+            try
+            {
+                await _employeeCredentialsService.UpdatePinHashAsync(model.Email, model.PinHash);
+            }
+            catch (InvalidOperationException ex)
+            {
+                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(UpdatePinHash), model.ToJson(),
+                    ex.Message);
+
+                return BadRequest(ErrorResponse.Create(ex.Message));
+            }
+
+            return NoContent();
         }
     }
 }

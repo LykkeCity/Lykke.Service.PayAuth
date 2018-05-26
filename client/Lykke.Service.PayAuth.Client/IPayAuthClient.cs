@@ -40,12 +40,40 @@ namespace Lykke.Service.PayAuth.Client
         Task UpdateAsync(UpdateCredentialsModel model, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// Validates employee credentials.
+        /// Validates employee password
         /// </summary>
         /// <param name="email">The employee email.</param>
         /// <param name="password">The employee password.</param>
-        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The validation result.</returns>
-        Task<ValidateResultModel> ValidateAsync(string email, string password, CancellationToken cancellationToken = default(CancellationToken));
+        Task<ValidateResultModel> ValidatePasswordAsync(string email, string password);
+
+        /// <summary>
+        /// Updates password hash
+        /// </summary>
+        /// <param name="model">Password hash update details</param>
+        /// <returns></returns>
+        Task UpdatePasswordHashAsync(UpdatePasswordHashModel model);
+
+        /// <summary>
+        /// Turns on passwordUpdate marker
+        /// </summary>
+        /// <param name="model">Enforce password details</param>
+        /// <returns></returns>
+        Task EnforcePasswordUpdateAsync(EnforcePasswordUpdateModel model);
+
+        /// <summary>
+        /// Validates employee pin
+        /// </summary>
+        /// <param name="email">The employee email.</param>
+        /// <param name="pin">The employee pin</param>
+        /// <returns></returns>
+        Task<ValidateResultModel> ValidatePinAsync(string email, string pin);
+
+        /// <summary>
+        /// Updates pin hash
+        /// </summary>
+        /// <param name="model">Pin hash update details</param>
+        /// <returns></returns>
+        Task UpdatePinHashAsync(UpdatePinHashModel model);
     }
 }

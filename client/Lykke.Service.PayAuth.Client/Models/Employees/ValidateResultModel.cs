@@ -28,5 +28,13 @@
         /// It will be <c>null</c> if <see cref="Success"/> is <c>false</c>.
         /// </remarks> 
         public string MerchantId { get; set; }
+
+        /// <summary>
+        /// Gets or sets updatePassword
+        /// </summary>
+        /// <remarks>
+        /// Means that user password has to be changed
+        /// </remarks>
+        public bool UpdatePasswordMarker { get; set; }
     }
 }
