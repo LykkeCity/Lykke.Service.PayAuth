@@ -161,7 +161,7 @@ namespace Lykke.Service.PayAuth.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("password/updateMarker")]
+        [Route("password/forceUpdate")]
         [SwaggerOperation(nameof(EnforcePasswordUpdate))]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
