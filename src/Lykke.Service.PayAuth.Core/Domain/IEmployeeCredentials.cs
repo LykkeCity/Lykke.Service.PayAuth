@@ -14,6 +14,6 @@
 
         string PinCode { get; }
 
-        bool UpdatePassword { get; }
+        bool ForcePasswordUpdate { get; }
     }
 }

@@ -30,11 +30,11 @@
         public string MerchantId { get; set; }
 
         /// <summary>
-        /// Gets or sets updatePassword
+        /// Gets or sets forcePasswordUpdate flag
         /// </summary>
         /// <remarks>
         /// Means that user password has to be changed
         /// </remarks>
-        public bool UpdatePasswordMarker { get; set; }
+        public bool ForcePasswordUpdate { get; set; }
     }
 }

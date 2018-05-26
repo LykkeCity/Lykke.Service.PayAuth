@@ -123,7 +123,7 @@ namespace Lykke.Service.PayAuth.Controllers
             {
                 MerchantId = employeeCredentials.MerchantId,
                 EmployeeId = employeeCredentials.EmployeeId,
-                UpdatePasswordMarker = employeeCredentials.UpdatePassword
+                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate
             });
         }
 
@@ -206,7 +206,7 @@ namespace Lykke.Service.PayAuth.Controllers
             {
                 MerchantId = employeeCredentials.MerchantId,
                 EmployeeId = employeeCredentials.EmployeeId,
-                UpdatePasswordMarker = employeeCredentials.UpdatePassword
+                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate
             });
         }
 

@@ -7,7 +7,7 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
     [ValueTypeMergingStrategy(ValueTypeMergingStrategy.UpdateIfDirty)]
     public class EmployeeCredentialsEntity : AzureTableEntity
     {
-        private bool _updatePassword;
+        private bool _forcePasswordUpdate;
 
         public string EmployeeId { get; set; }
 
@@ -21,13 +21,13 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
 
         public string PinCode { get; set; }
 
-        public bool UpdatePassword
+        public bool ForcePasswordUpdate
         {
-            get => _updatePassword;
+            get => _forcePasswordUpdate;
             set
             {
-                _updatePassword = value;
-                MarkValueTypePropertyAsDirty(nameof(UpdatePassword));
+                _forcePasswordUpdate = value;
+                MarkValueTypePropertyAsDirty(nameof(ForcePasswordUpdate));
             }
         }
     }

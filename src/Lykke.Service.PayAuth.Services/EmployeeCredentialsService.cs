@@ -39,7 +39,7 @@ namespace Lykke.Service.PayAuth.Services
                 Password = hash,
                 Salt = salt,
                 PinCode = null,
-                UpdatePassword = employeeCredentials.UpdatePassword
+                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
@@ -68,7 +68,7 @@ namespace Lykke.Service.PayAuth.Services
                 Email = employeeCredentials.Email,
                 Password = hash,
                 Salt = salt,
-                UpdatePassword = false
+                ForcePasswordUpdate = false
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
@@ -95,7 +95,7 @@ namespace Lykke.Service.PayAuth.Services
                 PinCode = credentials.PinCode,
                 Salt = credentials.Salt,
                 Password = hash,
-                UpdatePassword = false
+                ForcePasswordUpdate = false
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(UpdatePasswordHashAsync),
@@ -119,7 +119,7 @@ namespace Lykke.Service.PayAuth.Services
                 MerchantId = credentials.MerchantId,
                 EmployeeId = credentials.EmployeeId,
                 Email = credentials.Email,
-                UpdatePassword = credentials.UpdatePassword,
+                ForcePasswordUpdate = credentials.ForcePasswordUpdate,
                 Password = credentials.Password,
                 Salt = credentials.Salt,
                 PinCode = hash
@@ -149,7 +149,7 @@ namespace Lykke.Service.PayAuth.Services
                 Password = credentials.Password,
                 Salt = credentials.Salt,
                 PinCode = credentials.PinCode,
-                UpdatePassword = true
+                ForcePasswordUpdate = true
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(EnforcePasswordUpdateAsync),
