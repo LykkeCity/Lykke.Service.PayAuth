@@ -195,7 +195,12 @@ namespace Lykke.Service.PayAuth.Services
                 new { Email = email.SanitizeEmail()}.ToString(),
                 "Employee credentials deleted.");
         }
-        
+
+        string IEmployeeCredentialsService.CalculateHash(string source, string salt)
+        {
+            return CalculateHash(source, salt);
+        }
+
         private static string CalculateHash(string password, string salt)
         {
             return Convert.ToBase64String(SHA1.Create().ComputeHash($"{password}{salt}".ToUtf8Bytes()));
