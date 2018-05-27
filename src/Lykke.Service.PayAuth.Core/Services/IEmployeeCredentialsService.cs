@@ -20,5 +20,7 @@ namespace Lykke.Service.PayAuth.Core.Services
         Task<IEmployeeCredentials> ValidatePinAsync(string email, string pin);
 
         Task DeleteAsync(string email);
+
+        string CalculateHash(string source, string salt);
     }
 }
