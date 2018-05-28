@@ -165,7 +165,7 @@ namespace Lykke.Service.PayAuth.Services
         {
             IEmployeeCredentials credentials = await _repository.GetAsync(email);
 
-            if (credentials == null)
+            if (string.IsNullOrEmpty(credentials?.Password))
                 return null;
 
             bool passed = credentials.Password.Equals(password) ||
@@ -178,7 +178,7 @@ namespace Lykke.Service.PayAuth.Services
         {
             IEmployeeCredentials credentials = await _repository.GetAsync(email);
 
-            if (credentials == null)
+            if (string.IsNullOrEmpty(credentials?.PinCode))
                 return null;
 
             bool passed = credentials.PinCode.Equals(pin) ||

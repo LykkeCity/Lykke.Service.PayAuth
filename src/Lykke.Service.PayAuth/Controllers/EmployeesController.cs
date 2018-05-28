@@ -8,6 +8,7 @@ using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Core.Utils;
+using Lykke.Service.PayAuth.Extensions;
 using Lykke.Service.PayAuth.Filters;
 using Lykke.Service.PayAuth.Models.Employees;
 using Microsoft.AspNetCore.Mvc;
