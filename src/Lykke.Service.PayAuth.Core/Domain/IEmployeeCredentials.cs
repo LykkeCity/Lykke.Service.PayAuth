@@ -11,5 +11,9 @@
         string Password { get; }
         
         string Salt { get; }
+
+        string PinCode { get; }
+
+        bool ForcePasswordUpdate { get; }
     }
 }

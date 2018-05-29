@@ -2,7 +2,7 @@
 
 namespace Lykke.Service.PayAuth.Models
 {
-    public class VerifyModel
+    public class VerifySignatureModel
     {
         [Required]
         public string Text { get; set; }

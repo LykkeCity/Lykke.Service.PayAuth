@@ -38,6 +38,7 @@ namespace Lykke.Service.PayAuth.Core
 
             return isCorrect ? SecurityErrorType.Ok : SecurityErrorType.SignIncorrect;
         }
+
         private X509Certificate2 GetCertificate(string cert)
         {
             cert = cert.Replace("-----BEGIN CERTIFICATE-----", string.Empty);

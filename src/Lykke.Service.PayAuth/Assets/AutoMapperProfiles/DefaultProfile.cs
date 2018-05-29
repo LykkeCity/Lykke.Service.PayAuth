@@ -12,10 +12,14 @@ namespace Lykke.Service.PayAuth.Assets.AutoMapperProfiles
             CreateMap<PayAuthModel, Core.Domain.PayAuth>();
 
             CreateMap<RegisterModel, EmployeeCredentials>(MemberList.Destination)
-                .ForMember(dest => dest.Salt, opt => opt.Ignore());
+                .ForMember(dest => dest.Salt, opt => opt.Ignore())
+                .ForMember(dest => dest.PinCode, opt => opt.Ignore())
+                .ForMember(dest => dest.ForcePasswordUpdate, opt => opt.UseValue(true));
 
             CreateMap<UpdateCredentialsModel, EmployeeCredentials>(MemberList.Destination)
-                .ForMember(dest => dest.Salt, opt => opt.Ignore());
+                .ForMember(dest => dest.Salt, opt => opt.Ignore())
+                .ForMember(dest => dest.PinCode, opt => opt.Ignore())
+                .ForMember(dest => dest.ForcePasswordUpdate, opt => opt.Ignore());
         }
 
         public override string ProfileName => "Default profile";
