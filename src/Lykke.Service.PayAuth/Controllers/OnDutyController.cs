@@ -29,7 +29,9 @@ namespace Lykke.Service.PayAuth.Controllers
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         public IActionResult CalculateHash(string source, string salt)
         {
-            return Ok(_employeeCredentialsService.CalculateHash(source, salt));
+            return Ok(_employeeCredentialsService.CalculateHash(
+                Uri.UnescapeDataString(source),
+                Uri.UnescapeDataString(salt)));
         }
     }
 }
