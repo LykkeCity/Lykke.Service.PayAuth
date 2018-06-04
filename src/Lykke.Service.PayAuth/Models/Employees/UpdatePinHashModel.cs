@@ -5,7 +5,7 @@ namespace Lykke.Service.PayAuth.Models.Employees
     public class UpdatePinHashModel
     {
         [Required]
-        [EmailAddress]
+        [Validation.EmailAddressAndRowKey]
         public string Email { get; set; }
 
         [Required]
