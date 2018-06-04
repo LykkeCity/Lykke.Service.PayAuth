@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
 namespace Lykke.Service.PayAuth.Models.Employees
 {
     public class PasswordValidationModel
     {
         [Required]
-        [EmailAddress]
+        [Validation.EmailAddressAndRowKey]
         public string Email { get; set; }
         
         [Required]
