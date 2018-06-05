@@ -11,7 +11,7 @@ namespace Lykke.Service.PayAuth.Models.Employees
         public string MerchantId { get; set; }
 
         [Required]
-        [EmailAddress]
+        [Validation.EmailAddressAndRowKey]
         public string Email { get; set; }
 
         [Required]
