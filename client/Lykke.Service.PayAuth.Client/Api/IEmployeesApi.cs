@@ -19,8 +19,8 @@ namespace Lykke.Service.PayAuth.Client.Api
         [Post("/api/employees/password/hash")]
         Task UpdatePasswordHashAsync([Body] UpdatePasswordHashModel model);
 
-        [Post("/api/employees/password/forceUpdate")]
-        Task EnforcePasswordUpdateAsync([Body] EnforcePasswordUpdateModel model);
+        [Post("/api/employees/credentials/forceUpdate")]
+        Task EnforceCredentialsUpdateAsync([Body] EnforceCredentialsUpdateModel model);
 
         [Get("/api/employees/pin")]
         Task<ValidateResultModel> ValidatePinAsync(string email, string pin);

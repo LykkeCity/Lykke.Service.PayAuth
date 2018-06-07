@@ -3,7 +3,7 @@
     /// <summary>
     /// Enforce passwordUpdate model
     /// </summary>
-    public class EnforcePasswordUpdateModel
+    public class EnforceCredentialsUpdateModel
     {
         /// <summary>
         /// Gets or sets an email

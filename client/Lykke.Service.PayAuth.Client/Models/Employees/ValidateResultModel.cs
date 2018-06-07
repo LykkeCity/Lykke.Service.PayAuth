@@ -33,8 +33,16 @@
         /// Gets or sets forcePasswordUpdate flag
         /// </summary>
         /// <remarks>
-        /// Means that user password has to be changed
+        /// Means that user's password has to be changed
         /// </remarks>
         public bool ForcePasswordUpdate { get; set; }
+
+        /// <summary>
+        /// Gets or sets forcePinUpdate flag
+        /// </summary>
+        /// <remarks>
+        /// Means that user's pin has to be changed
+        /// </remarks>
+        public bool ForcePinUpdate { get; set; }
     }
 }

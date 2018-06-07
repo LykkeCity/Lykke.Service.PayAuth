@@ -75,9 +75,9 @@ namespace Lykke.Service.PayAuth.Client
             return _runner.RunAsync(() => _employeesApi.UpdatePasswordHashAsync(model));
         }
 
-        public Task EnforcePasswordUpdateAsync(EnforcePasswordUpdateModel model)
+        public Task EnforceCredentialsUpdateAsync(EnforceCredentialsUpdateModel model)
         {
-            return _runner.RunAsync(() => _employeesApi.EnforcePasswordUpdateAsync(model));
+            return _runner.RunAsync(() => _employeesApi.EnforceCredentialsUpdateAsync(model));
         }
 
         public Task<ValidateResultModel> ValidatePinAsync(string email, string pin)

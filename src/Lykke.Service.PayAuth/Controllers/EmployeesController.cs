@@ -8,7 +8,6 @@ using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Core.Utils;
-using Lykke.Service.PayAuth.Extensions;
 using Lykke.Service.PayAuth.Filters;
 using Lykke.Service.PayAuth.Models.Employees;
 using Microsoft.AspNetCore.Mvc;
@@ -124,7 +123,8 @@ namespace Lykke.Service.PayAuth.Controllers
             {
                 MerchantId = employeeCredentials.MerchantId,
                 EmployeeId = employeeCredentials.EmployeeId,
-                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate
+                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate,
+                ForcePinUpdate = employeeCredentials.ForcePinUpdate
             });
         }
 
@@ -162,20 +162,20 @@ namespace Lykke.Service.PayAuth.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("password/forceUpdate")]
-        [SwaggerOperation(nameof(EnforcePasswordUpdate))]
+        [Route("credentials/forceUpdate")]
+        [SwaggerOperation(nameof(EnforceCredentialsUpdate))]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ValidateModel]
-        public async Task<IActionResult> EnforcePasswordUpdate([FromBody] EnforcePasswordUpdateModel model)
+        public async Task<IActionResult> EnforceCredentialsUpdate([FromBody] EnforceCredentialsUpdateModel model)
         {
             try
             {
-                await _employeeCredentialsService.EnforcePasswordUpdateAsync(model.Email);
+                await _employeeCredentialsService.EnforceCredentialsUpdateAsync(model.Email);
             }
             catch (InvalidOperationException ex)
             {
-                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(EnforcePasswordUpdate), model.ToJson(),
+                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(EnforceCredentialsUpdate), model.ToJson(),
                     ex.Message);
 
                 return BadRequest(ErrorResponse.Create(ex.Message));
@@ -207,7 +207,8 @@ namespace Lykke.Service.PayAuth.Controllers
             {
                 MerchantId = employeeCredentials.MerchantId,
                 EmployeeId = employeeCredentials.EmployeeId,
-                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate
+                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate,
+                ForcePinUpdate = employeeCredentials.ForcePinUpdate
             });
         }
 
