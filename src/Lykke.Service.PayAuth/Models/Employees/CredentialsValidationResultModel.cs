@@ -18,5 +18,7 @@
         public string MerchantId { get; set; }
 
         public bool ForcePasswordUpdate { get; set; }
+
+        public bool ForcePinUpdate { get; set; }
     }
 }

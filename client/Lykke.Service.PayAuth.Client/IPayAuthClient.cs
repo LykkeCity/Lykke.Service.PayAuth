@@ -59,7 +59,7 @@ namespace Lykke.Service.PayAuth.Client
         /// </summary>
         /// <param name="model">Enforce password details</param>
         /// <returns></returns>
-        Task EnforcePasswordUpdateAsync(EnforcePasswordUpdateModel model);
+        Task EnforceCredentialsUpdateAsync(EnforceCredentialsUpdateModel model);
 
         /// <summary>
         /// Validates employee pin

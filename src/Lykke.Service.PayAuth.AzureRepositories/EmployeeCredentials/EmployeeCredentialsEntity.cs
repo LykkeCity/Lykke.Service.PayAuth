@@ -9,6 +9,8 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
     {
         private bool _forcePasswordUpdate;
 
+        private bool _forcePinUpdate;
+
         public string EmployeeId { get; set; }
 
         public string MerchantId { get; set; }
@@ -28,6 +30,16 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
             {
                 _forcePasswordUpdate = value;
                 MarkValueTypePropertyAsDirty(nameof(ForcePasswordUpdate));
+            }
+        }
+
+        public bool ForcePinUpdate
+        {
+            get => _forcePinUpdate;
+            set
+            {
+                _forcePinUpdate = value;
+                MarkValueTypePropertyAsDirty(nameof(ForcePinUpdate));
             }
         }
     }
