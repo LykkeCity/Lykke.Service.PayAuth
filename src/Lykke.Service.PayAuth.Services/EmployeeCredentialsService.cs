@@ -39,7 +39,8 @@ namespace Lykke.Service.PayAuth.Services
                 Password = hash,
                 Salt = salt,
                 PinCode = null,
-                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate
+                ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate,
+                ForcePinUpdate = employeeCredentials.ForcePinUpdate
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
@@ -68,7 +69,8 @@ namespace Lykke.Service.PayAuth.Services
                 Email = employeeCredentials.Email,
                 Password = hash,
                 Salt = salt,
-                ForcePasswordUpdate = false
+                ForcePasswordUpdate = false,
+                ForcePinUpdate = false
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
@@ -95,7 +97,8 @@ namespace Lykke.Service.PayAuth.Services
                 PinCode = credentials.PinCode,
                 Salt = credentials.Salt,
                 Password = hash,
-                ForcePasswordUpdate = false
+                ForcePasswordUpdate = false,
+                ForcePinUpdate = credentials.ForcePinUpdate
             });
 
             await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(UpdatePasswordHashAsync),
@@ -120,6 +123,7 @@ namespace Lykke.Service.PayAuth.Services
                 EmployeeId = credentials.EmployeeId,
                 Email = credentials.Email,
                 ForcePasswordUpdate = credentials.ForcePasswordUpdate,
+                ForcePinUpdate = false,
                 Password = credentials.Password,
                 Salt = credentials.Salt,
                 PinCode = hash
@@ -134,7 +138,7 @@ namespace Lykke.Service.PayAuth.Services
                 "Employee pin updated.");
         }
 
-        public async Task EnforcePasswordUpdateAsync(string email)
+        public async Task EnforceCredentialsUpdateAsync(string email)
         {
             IEmployeeCredentials credentials = await _repository.GetAsync(email);
 
@@ -149,10 +153,11 @@ namespace Lykke.Service.PayAuth.Services
                 Password = credentials.Password,
                 Salt = credentials.Salt,
                 PinCode = credentials.PinCode,
-                ForcePasswordUpdate = true
+                ForcePasswordUpdate = true,
+                ForcePinUpdate = true
             });
 
-            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(EnforcePasswordUpdateAsync),
+            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(EnforceCredentialsUpdateAsync),
                 credentials.MerchantId
                     .ToContext(nameof(credentials.MerchantId))
                     .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)

@@ -29,7 +29,8 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
                 Password = entity.Password,
                 Salt = entity.Salt,
                 PinCode = entity.PinCode,
-                ForcePasswordUpdate = entity.ForcePasswordUpdate
+                ForcePasswordUpdate = entity.ForcePasswordUpdate,
+                ForcePinUpdate = entity.ForcePinUpdate
             };
         }
 
@@ -45,7 +46,8 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
                 Password = credentials.Password,
                 Salt = credentials.Salt,
                 PinCode = credentials.PinCode,
-                ForcePasswordUpdate = credentials.ForcePasswordUpdate
+                ForcePasswordUpdate = credentials.ForcePasswordUpdate,
+                ForcePinUpdate = credentials.ForcePinUpdate
             });
         }
        

@@ -9,5 +9,6 @@
         public string Salt { get; set; }
         public string PinCode { get; set; }
         public bool ForcePasswordUpdate { get; set; }
+        public bool ForcePinUpdate { get; set; }
     }
 }

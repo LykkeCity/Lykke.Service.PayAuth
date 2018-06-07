@@ -2,7 +2,7 @@
 
 namespace Lykke.Service.PayAuth.Models.Employees
 {
-    public class EnforcePasswordUpdateModel
+    public class EnforceCredentialsUpdateModel
     {
         [Required]
         [Validation.EmailAddressAndRowKey]
