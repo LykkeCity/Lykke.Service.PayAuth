@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.PayAuth.Client 
+namespace Lykke.Service.PayAuth.Client 
 {
     public class PayAuthServiceClientSettings 
     {

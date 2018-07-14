@@ -2,8 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
-using Common;
-using Common.Log;
+using JetBrains.Annotations;
 using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Filters;
@@ -17,11 +16,10 @@ namespace Lykke.Service.PayAuth.Controllers
     public class RegisterController : Controller
     {
         private readonly IPayAuthService _payAuthService;
-        private readonly ILog _log;
-        public RegisterController(IPayAuthService payAuthService, ILog log)
+        public RegisterController(
+            [NotNull] IPayAuthService payAuthService)
         {
-            _payAuthService = payAuthService;
-            _log = log;
+            _payAuthService = payAuthService ?? throw new ArgumentNullException(nameof(payAuthService));
         }
 
         /// <summary>
@@ -33,24 +31,14 @@ namespace Lykke.Service.PayAuth.Controllers
         [SwaggerOperation("Register")]
         [ValidateModel]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(void), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Register([FromBody] PayAuthModel request)
         {
-            try
-            {
-                var newPayAuth = Mapper.Map<Core.Domain.PayAuth>(request);
+            var newPayAuth = Mapper.Map<Core.Domain.PayAuth>(request);
 
-                await _payAuthService.AddAsync(newPayAuth);
+            await _payAuthService.AddAsync(newPayAuth);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _log.WriteErrorAsync(nameof(RegisterController), nameof(Register), request.ToJson(), ex);
-            }
-
-            return StatusCode((int) HttpStatusCode.InternalServerError);
+            return Ok();
         }
     }
 }

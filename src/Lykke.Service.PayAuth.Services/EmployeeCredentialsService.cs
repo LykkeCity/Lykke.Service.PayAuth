@@ -3,6 +3,8 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using JetBrains.Annotations;
+using Lykke.Common.Log;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Repositories;
 using Lykke.Service.PayAuth.Core.Services;
@@ -15,10 +17,12 @@ namespace Lykke.Service.PayAuth.Services
         private readonly IEmployeeCredentialsRepository _repository;
         private readonly ILog _log;
 
-        public EmployeeCredentialsService(IEmployeeCredentialsRepository repository, ILog log)
+        public EmployeeCredentialsService(
+            [NotNull] IEmployeeCredentialsRepository repository, 
+            [NotNull] ILogFactory logFactory)
         {
-            _repository = repository;
-            _log = log;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _log = logFactory.CreateLog(this);
         }
         
         public async Task RegisterAsync(IEmployeeCredentials employeeCredentials)
@@ -43,13 +47,11 @@ namespace Lykke.Service.PayAuth.Services
                 ForcePinUpdate = employeeCredentials.ForcePinUpdate
             });
 
-            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
+            _log.Info("Employee credentials registered.",
                 employeeCredentials.MerchantId
                     .ToContext(nameof(employeeCredentials.MerchantId))
                     .ToContext(nameof(employeeCredentials.EmployeeId), employeeCredentials.EmployeeId)
-                    .ToContext(nameof(employeeCredentials.Email), employeeCredentials.Email.SanitizeEmail())
-                    .ToJson(),
-                "Employee credentials registered.");
+                    .ToContext(nameof(employeeCredentials.Email), employeeCredentials.Email.SanitizeEmail()));
         }
         
         public async Task UpdateAsync(IEmployeeCredentials employeeCredentials)
@@ -73,13 +75,11 @@ namespace Lykke.Service.PayAuth.Services
                 ForcePinUpdate = false
             });
 
-            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
+            _log.Info("Employee credentials updated.",
                 employeeCredentials.MerchantId
                     .ToContext(nameof(employeeCredentials.MerchantId))
                     .ToContext(nameof(employeeCredentials.EmployeeId), employeeCredentials.EmployeeId)
-                    .ToContext(nameof(employeeCredentials.Email), employeeCredentials.Email.SanitizeEmail())
-                    .ToJson(),
-                "Employee credentials updated.");
+                    .ToContext(nameof(employeeCredentials.Email), employeeCredentials.Email.SanitizeEmail()));
         }
 
         public async Task UpdatePasswordHashAsync(string email, string hash)
@@ -101,13 +101,12 @@ namespace Lykke.Service.PayAuth.Services
                 ForcePinUpdate = credentials.ForcePinUpdate
             });
 
-            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(UpdatePasswordHashAsync),
+            _log.Info("Employee password updated.",
                 credentials.MerchantId
                     .ToContext(nameof(credentials.MerchantId))
                     .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)
                     .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail())
-                    .ToJson(),
-                "Employee password updated.");
+                    .ToJson());
         }
 
         public async Task UpdatePinHashAsync(string email, string hash)
@@ -129,13 +128,11 @@ namespace Lykke.Service.PayAuth.Services
                 PinCode = hash
             });
 
-            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(UpdatePinHashAsync),
+            _log.Info("Employee pin updated.",
                 credentials.MerchantId
                     .ToContext(nameof(credentials.MerchantId))
                     .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)
-                    .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail())
-                    .ToJson(),
-                "Employee pin updated.");
+                    .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail()));
         }
 
         public async Task EnforceCredentialsUpdateAsync(string email)
@@ -157,13 +154,11 @@ namespace Lykke.Service.PayAuth.Services
                 ForcePinUpdate = true
             });
 
-            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(EnforceCredentialsUpdateAsync),
+            _log.Info("Employee first time login flag set.",
                 credentials.MerchantId
                     .ToContext(nameof(credentials.MerchantId))
                     .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)
-                    .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail())
-                    .ToJson(),
-                "Employee first time login flag set.");
+                    .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail()));
         }
 
         public async Task<IEmployeeCredentials> ValidatePasswordAsync(string email, string password)
@@ -195,10 +190,8 @@ namespace Lykke.Service.PayAuth.Services
         public async Task DeleteAsync(string email)
         {
             await _repository.DeleteAsync(email);
-            
-            await _log.WriteInfoAsync(nameof(EmployeeCredentialsService), nameof(RegisterAsync),
-                new { Email = email.SanitizeEmail()}.ToString(),
-                "Employee credentials deleted.");
+
+            _log.Info("Employee credentials deleted.", new {Email = email.SanitizeEmail()});
         }
 
         string IEmployeeCredentialsService.CalculateHash(string source, string salt)

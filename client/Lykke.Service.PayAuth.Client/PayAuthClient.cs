@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Common.Log;
 using Lykke.Service.PayAuth.Client.Models;
 using Lykke.Service.PayAuth.Client.Api;
 using System.Net.Http;
@@ -13,15 +12,13 @@ namespace Lykke.Service.PayAuth.Client
 {
     public class PayAuthClient : IPayAuthClient, IDisposable
     {
-        private readonly ILog _log;
         private readonly IPayAuthApi _payAuthApi;
         private readonly IEmployeesApi _employeesApi;
         private readonly ApiRunner _runner;
         private readonly HttpClient _httpClient;
 
-        public PayAuthClient(PayAuthServiceClientSettings settings, ILog log)
+        public PayAuthClient(PayAuthServiceClientSettings settings)
         {
-            _log = log;
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));
 
