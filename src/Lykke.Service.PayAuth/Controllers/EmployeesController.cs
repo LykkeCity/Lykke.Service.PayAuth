@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Common;
 using Common.Log;
+using JetBrains.Annotations;
 using Lykke.Common.Api.Contract.Responses;
+using Lykke.Common.Log;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Core.Utils;
@@ -22,11 +24,11 @@ namespace Lykke.Service.PayAuth.Controllers
         private readonly ILog _log;
 
         public EmployeesController(
-            IEmployeeCredentialsService employeeCredentialsService,
-            ILog log)
+            [NotNull] IEmployeeCredentialsService employeeCredentialsService,
+            [NotNull] ILogFactory logFactory)
         {
-            _employeeCredentialsService = employeeCredentialsService;
-            _log = log;
+            _employeeCredentialsService = employeeCredentialsService ?? throw new ArgumentNullException(nameof(employeeCredentialsService));
+            _log = logFactory.CreateLog(this);
         }
         
         /// <summary>
@@ -48,17 +50,15 @@ namespace Lykke.Service.PayAuth.Controllers
                 
                 await _employeeCredentialsService.RegisterAsync(credentials);
             }
-            catch (InvalidOperationException exception)
+            catch (InvalidOperationException e)
             {
-                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(RegisterAsync),
+                _log.Warning(e.Message, e,
                     model.MerchantId
                         .ToContext(nameof(model.MerchantId))
                         .ToContext(nameof(model.EmployeeId), model.EmployeeId)
-                        .ToContext(nameof(model.Email), model.Email.SanitizeEmail())
-                        .ToJson(),
-                    exception.Message);
+                        .ToContext(nameof(model.Email), model.Email.SanitizeEmail()));
                 
-                return BadRequest(ErrorResponse.Create(exception.Message));
+                return BadRequest(ErrorResponse.Create(e.Message));
             }
 
             return NoContent();
@@ -83,17 +83,15 @@ namespace Lykke.Service.PayAuth.Controllers
 
                 await _employeeCredentialsService.UpdateAsync(credentials);
             }
-            catch (InvalidOperationException exception)
+            catch (InvalidOperationException e)
             {
-                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(UpdateAsync),
+                _log.Warning(e.Message, e,
                     model.MerchantId
                         .ToContext(nameof(model.MerchantId))
                         .ToContext(nameof(model.EmployeeId), model.EmployeeId)
-                        .ToContext(nameof(model.Email), model.Email.SanitizeEmail())
-                        .ToJson(),
-                    exception.Message);
+                        .ToContext(nameof(model.Email), model.Email.SanitizeEmail()));
 
-                return BadRequest(ErrorResponse.Create(exception.Message));
+                return BadRequest(ErrorResponse.Create(e.Message));
             }
 
             return NoContent();
@@ -145,12 +143,11 @@ namespace Lykke.Service.PayAuth.Controllers
             {
                 await _employeeCredentialsService.UpdatePasswordHashAsync(model.Email, model.PasswordHash);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException e)
             {
-                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(UpdatePasswordHash), model.ToJson(),
-                    ex.Message);
+                _log.Warning(e.Message, e, model);
 
-                return BadRequest(ErrorResponse.Create(ex.Message));
+                return BadRequest(ErrorResponse.Create(e.Message));
             }
 
             return NoContent();
@@ -173,12 +170,11 @@ namespace Lykke.Service.PayAuth.Controllers
             {
                 await _employeeCredentialsService.EnforceCredentialsUpdateAsync(model.Email);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException e)
             {
-                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(EnforceCredentialsUpdate), model.ToJson(),
-                    ex.Message);
+                _log.Warning(e.Message, e, model);
 
-                return BadRequest(ErrorResponse.Create(ex.Message));
+                return BadRequest(ErrorResponse.Create(e.Message));
             }
 
             return NoContent();
@@ -229,12 +225,11 @@ namespace Lykke.Service.PayAuth.Controllers
             {
                 await _employeeCredentialsService.UpdatePinHashAsync(model.Email, model.PinHash);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException e)
             {
-                await _log.WriteWarningAsync(nameof(EmployeesController), nameof(UpdatePinHash), model.ToJson(),
-                    ex.Message);
+                _log.Warning(e.Message, e, model);
 
-                return BadRequest(ErrorResponse.Create(ex.Message));
+                return BadRequest(ErrorResponse.Create(e.Message));
             }
 
             return NoContent();
