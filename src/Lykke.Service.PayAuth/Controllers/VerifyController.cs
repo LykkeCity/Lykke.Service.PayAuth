@@ -5,6 +5,7 @@ using Common;
 using Common.Log;
 using JetBrains.Annotations;
 using Lykke.Common.Api.Contract.Responses;
+using Lykke.Common.Log;
 using Lykke.Service.PayAuth.Core;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Exceptions;
@@ -26,11 +27,11 @@ namespace Lykke.Service.PayAuth.Controllers
         public VerifyController(
             [NotNull] ISecurityHelper securityHelper,
             [NotNull] IPayAuthService payAuthService,
-            [NotNull] ILog log)
+            [NotNull] ILogFactory logFactory)
         {
             _securityHelper = securityHelper ?? throw new ArgumentNullException(nameof(securityHelper));
             _payAuthService = payAuthService ?? throw new ArgumentNullException(nameof(payAuthService));
-            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _log = logFactory.CreateLog(this);
         }
 
         /// <summary>
@@ -42,7 +43,6 @@ namespace Lykke.Service.PayAuth.Controllers
         [SwaggerOperation("VerifySignature")]
         [ValidateModel]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(void), (int) HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(SignatureValidationResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> VerifySignature([FromBody] VerifySignatureModel request)
@@ -56,18 +56,12 @@ namespace Lykke.Service.PayAuth.Controllers
 
                 return Ok(new SignatureValidationResponse {Description = validationResult.ToString(), ErrorType = validationResult});
             }
-            catch (ClientNotFoundException ex)
+            catch (ClientNotFoundException e)
             {
-                await _log.WriteErrorAsync(nameof(VerifyController), nameof(VerifySignature), request.ToJson(), ex);
+                _log.Error(e, $"{e.Message}, request: {request.ToJson()}");
 
-                return NotFound(ErrorResponse.Create(ex.Message));
+                return NotFound(ErrorResponse.Create(e.Message));
             }
-            catch (Exception ex)
-            {
-                await _log.WriteErrorAsync(nameof(VerifyController), nameof(VerifySignature), request.ToJson(), ex);
-            }
-
-            return StatusCode((int) HttpStatusCode.InternalServerError);
         }
     }
 }

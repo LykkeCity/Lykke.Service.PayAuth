@@ -1,7 +1,4 @@
 ﻿using Lykke.Common.Entities.Security;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lykke.Service.PayAuth.Core
 {
