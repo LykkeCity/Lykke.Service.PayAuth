@@ -145,7 +145,7 @@ namespace Lykke.Service.PayAuth.Controllers
             }
             catch (InvalidOperationException e)
             {
-                _log.Warning(e.Message, e, model);
+                _log.Warning($"{e.Message}, request: {model.ToJson()}", e);
 
                 return BadRequest(ErrorResponse.Create(e.Message));
             }
@@ -172,7 +172,7 @@ namespace Lykke.Service.PayAuth.Controllers
             }
             catch (InvalidOperationException e)
             {
-                _log.Warning(e.Message, e, model);
+                _log.Warning($"{e.Message}, request: {model.ToJson()}", e);
 
                 return BadRequest(ErrorResponse.Create(e.Message));
             }
@@ -227,7 +227,7 @@ namespace Lykke.Service.PayAuth.Controllers
             }
             catch (InvalidOperationException e)
             {
-                _log.Warning(e.Message, e, model);
+                _log.Warning($"{e.Message}, request: {model.ToJson()}", e);
 
                 return BadRequest(ErrorResponse.Create(e.Message));
             }

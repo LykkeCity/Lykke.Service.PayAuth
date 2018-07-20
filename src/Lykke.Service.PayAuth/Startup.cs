@@ -178,7 +178,7 @@ namespace Lykke.Service.PayAuth
             }
             catch (Exception ex)
             {
-                Log?.Critical(nameof(CleanUp), ex);
+                Log?.Critical(ex);
                 (Log as IDisposable)?.Dispose();
                 throw;
             }

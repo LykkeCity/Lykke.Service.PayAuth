@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Common;
 using Common.Log;
 using JetBrains.Annotations;
 using Lykke.Common.Api.Contract.Responses;
@@ -57,7 +58,7 @@ namespace Lykke.Service.PayAuth.Controllers
             }
             catch (ClientNotFoundException e)
             {
-                _log.Error(e, context: request);
+                _log.Error(e, $"{e.Message}, request: {request.ToJson()}");
 
                 return NotFound(ErrorResponse.Create(e.Message));
             }
