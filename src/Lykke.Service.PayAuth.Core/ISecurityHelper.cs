@@ -6,5 +6,7 @@ namespace Lykke.Service.PayAuth.Core
     {
         SecurityErrorType CheckRequest(string strToSign, string clientId, string sign, string publicKey,
             string apiKey);
+
+        (string PrivateKey, string PublicKey) GenerateRsaKeys(string companyName);
     }
 }

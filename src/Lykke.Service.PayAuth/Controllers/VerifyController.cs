@@ -10,10 +10,10 @@ using Lykke.Service.PayAuth.Core;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Exceptions;
 using Lykke.Service.PayAuth.Core.Services;
-using Lykke.Service.PayAuth.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Lykke.Service.PayAuth.Models;
+using LykkePay.Common.Validation;
 
 namespace Lykke.Service.PayAuth.Controllers
 {
