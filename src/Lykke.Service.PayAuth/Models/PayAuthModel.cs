@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Lykke.Service.PayAuth.Core;
 
@@ -6,8 +7,7 @@ namespace Lykke.Service.PayAuth.Models
 {
     public class PayAuthModel
     {
-        [Required]
-        [DefaultValue(LykkePayConstants.DefaultSystemId)]
+        [Obsolete("Passed value can be null")]
         public string SystemId { get; set; }
 
         [Required]

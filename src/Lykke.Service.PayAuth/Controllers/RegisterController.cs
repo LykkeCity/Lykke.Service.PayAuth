@@ -5,8 +5,8 @@ using AutoMapper;
 using JetBrains.Annotations;
 using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.PayAuth.Core.Services;
-using Lykke.Service.PayAuth.Filters;
 using Lykke.Service.PayAuth.Models;
+using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -16,6 +16,7 @@ namespace Lykke.Service.PayAuth.Controllers
     public class RegisterController : Controller
     {
         private readonly IPayAuthService _payAuthService;
+
         public RegisterController(
             [NotNull] IPayAuthService payAuthService)
         {
@@ -25,10 +26,9 @@ namespace Lykke.Service.PayAuth.Controllers
         /// <summary>
         /// Registers new client in the system
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request">Model to create new pay auth for merchant</param>
         [HttpPost]
-        [SwaggerOperation("Register")]
+        [SwaggerOperation(nameof(Register))]
         [ValidateModel]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]

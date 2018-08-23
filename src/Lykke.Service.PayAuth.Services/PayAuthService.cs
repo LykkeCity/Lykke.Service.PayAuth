@@ -22,6 +22,16 @@ namespace Lykke.Service.PayAuth.Services
             await _payAuthRepository.AddAsync(payauth);
         }
 
+        public async Task UpdateAsync(IPayAuth payauth)
+        {
+            var client = await _payAuthRepository.GetAsync(payauth.ClientId, payauth.SystemId);
+
+            if (client == null)
+                throw new ClientNotFoundException(payauth.ClientId);
+
+            await _payAuthRepository.UpdateAsync(payauth);
+        }
+
         public async Task<IPayAuth> GetAsync(string clientId, string systemId)
         {
             var client = await _payAuthRepository.GetAsync(clientId, systemId);
