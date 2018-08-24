@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using Lykke.Common.Api.Contract.Responses;
+using Refit;
 using System;
 using System.Threading.Tasks;
 
@@ -12,9 +13,9 @@ namespace Lykke.Service.PayAuth.Client
             {
                 await method();
             }
-            catch (ApiException exception)
+            catch (ApiException ex)
             {
-                throw new ErrorResponseException("An error occurred  during calling api", exception);
+                ThrowException(ex);
             }
         }
 
@@ -24,10 +25,39 @@ namespace Lykke.Service.PayAuth.Client
             {
                 return await method();
             }
-            catch (ApiException exception)
+            catch (ApiException ex)
             {
-                throw new ErrorResponseException("An error occurred  during calling api", exception);
+                ThrowException(ex);
+                return default(T);
             }
+        }
+
+        private void ThrowException(ApiException ex)
+        {
+            if (ex.HasContent)
+            {
+                throw new ErrorResponseException(GetErrorResponse(ex), ex);
+            }
+            else
+            {
+                throw new ErrorResponseException(null, ex);
+            }
+        }
+
+        private static ErrorResponse GetErrorResponse(ApiException ex)
+        {
+            ErrorResponse errorResponse;
+
+            try
+            {
+                errorResponse = ex.GetContentAs<ErrorResponse>();
+            }
+            catch (Exception)
+            {
+                errorResponse = null;
+            }
+
+            return errorResponse;
         }
     }
 }
