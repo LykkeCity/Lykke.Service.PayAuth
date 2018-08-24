@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using LykkePay.Common.Validation;
 
 namespace Lykke.Service.PayAuth.Models.Employees
 {
     public class PinValidationModel
     {
         [Required]
-        [Validation.EmailAddressAndRowKey]
+        [EmailAndRowKey]
         public string Email { get; set; }
 
         [Required]

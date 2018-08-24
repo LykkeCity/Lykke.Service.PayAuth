@@ -10,7 +10,9 @@ using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Exceptions;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Models;
+using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Lykke.Service.PayAuth.Controllers
@@ -27,6 +29,34 @@ namespace Lykke.Service.PayAuth.Controllers
         {
             _accessTokenService = accessTokenService ?? throw new ArgumentNullException(nameof(accessTokenService));
             _log = logFactory.CreateLog(this);
+        }
+
+        /// <summary>
+        /// Creates new reset password token for the employee
+        /// </summary>
+        /// <param name="request">Token creations details</param>
+        /// <response code="200">Token details</response>
+        /// <response code="400">Token already exists</response>
+        [HttpPost]
+        [SwaggerOperation(nameof(Create))]
+        [ProducesResponseType(typeof(ResetPasswordAccessTokenResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> Create([FromBody] CreateResetPasswordTokenRequest request)
+        {
+            try
+            {
+                ResetPasswordAccessToken token =
+                    await _accessTokenService.CreateAsync(request.EmployeeId, request.MerchantId);
+
+                return Ok(Mapper.Map<ResetPasswordAccessTokenResponse>(token));
+            }
+            catch (DuplicateKeyException e)
+            {
+                _log.Error(e, $"{e.Message}, request: {request.ToJson()}");
+
+                return BadRequest(ErrorResponse.Create(e.Message));
+            }
         }
 
         /// <summary>

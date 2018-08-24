@@ -6,6 +6,9 @@ namespace Lykke.Service.PayAuth.Client.Api
 {
     internal interface IResetPasswordApi
     {
+        [Post("/api/resetPasswordToken")]
+        Task<ResetPasswordTokenModel> CreateAsync([Body] CreateResetPasswordTokenRequest request);
+
         [Get("/api/resetPasswordToken/{publicId}")]
         Task<ResetPasswordTokenModel> GetByPublicIdAsync(string publicId);
 
