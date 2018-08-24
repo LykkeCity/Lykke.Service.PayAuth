@@ -34,13 +34,18 @@ namespace Lykke.Service.PayAuth.Controllers
         /// </summary>
         /// <param name="publicId">Token public id</param>
         /// <response code="200">Token details</response>
+        /// <response code="404">Token not found</response>
         [HttpGet]
         [Route("{publicId}")]
         [SwaggerOperation(nameof(GetByPublicId))]
         [ProducesResponseType(typeof(ResetPasswordAccessTokenResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetByPublicId(string publicId)
         {
             ResetPasswordAccessToken token = await _accessTokenService.GetByPublicIdAsync(publicId);
+
+            if (token == null)
+                return NotFound(ErrorResponse.Create("Token not found"));
 
             return Ok(Mapper.Map<ResetPasswordAccessTokenResponse>(token));
         }
