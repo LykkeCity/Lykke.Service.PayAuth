@@ -14,6 +14,7 @@ namespace Lykke.Service.PayAuth.Client
     {
         private readonly IPayAuthApi _payAuthApi;
         private readonly IEmployeesApi _employeesApi;
+        private readonly IResetPasswordApi _resetPasswordApi;
         private readonly ApiRunner _runner;
         private readonly HttpClient _httpClient;
 
@@ -39,6 +40,7 @@ namespace Lykke.Service.PayAuth.Client
 
             _payAuthApi = RestService.For<IPayAuthApi>(_httpClient);
             _employeesApi = RestService.For<IEmployeesApi>(_httpClient);
+            _resetPasswordApi = RestService.For<IResetPasswordApi>(_httpClient);
             _runner = new ApiRunner();
         }
 
@@ -85,6 +87,16 @@ namespace Lykke.Service.PayAuth.Client
         public Task UpdatePinHashAsync(UpdatePinHashModel model)
         {
             return _runner.RunAsync(() => _employeesApi.UpdatePinHashAsync(model));
+        }
+
+        public Task<ResetPasswordTokenModel> GetResetPasswordTokenByPublicIdAsync(string publicId)
+        {
+            return _runner.RunAsync(() => _resetPasswordApi.GetByPublicIdAsync(publicId));
+        }
+
+        public Task<ResetPasswordTokenModel> RedeemResetPasswordTokenAsync(string publicId)
+        {
+            return _runner.RunAsync(() => _resetPasswordApi.RedeemAsync(publicId));
         }
 
         public void Dispose()

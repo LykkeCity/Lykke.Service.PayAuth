@@ -75,5 +75,19 @@ namespace Lykke.Service.PayAuth.Client
         /// <param name="model">Pin hash update details</param>
         /// <returns></returns>
         Task UpdatePinHashAsync(UpdatePinHashModel model);
+
+        /// <summary>
+        /// Returns reset password access token details
+        /// </summary>
+        /// <param name="publicId"></param>
+        /// <returns></returns>
+        Task<ResetPasswordTokenModel> GetResetPasswordTokenByPublicIdAsync(string publicId);
+
+        /// <summary>
+        /// Redeems reset password token
+        /// </summary>
+        /// <param name="publicId"></param>
+        /// <returns></returns>
+        Task<ResetPasswordTokenModel> RedeemResetPasswordTokenAsync(string publicId);
     }
 }

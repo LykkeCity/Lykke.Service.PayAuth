@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Lykke.Service.PayAuth.Assets.AutoMapperProfiles;
+using Lykke.Service.PayAuth.AutoMapperProfiles;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lykke.Service.PayAuth.Tests

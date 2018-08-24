@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
+using AzureStorage.Tables.Templates.Index;
 using Lykke.Common.Log;
 using Lykke.Service.PayAuth.AzureRepositories;
 using Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials;
+using Lykke.Service.PayAuth.AzureRepositories.ResetPasswordAccessToken;
 using Lykke.Service.PayAuth.Core;
 using Lykke.Service.PayAuth.Core.Repositories;
 using Lykke.Service.PayAuth.Core.Services;
@@ -46,6 +48,10 @@ namespace Lykke.Service.PayAuth.Modules
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
 
+            builder.RegisterType<ResetPasswordAccessTokenService>()
+                .As<IResetPasswordAccessTokenService>()
+                .WithParameter(TypedParameter.From(_settings.CurrentValue.ResetPasswordAccessTokenExpiration));
+
             RegisterRepositories(builder);
 
             builder.Populate(_services);
@@ -55,6 +61,7 @@ namespace Lykke.Service.PayAuth.Modules
         {
             const string payauthTableName = "PayAuthSignature";
             const string employeeCredentialsTableName = "EmployeeCredentials";
+            const string resetPasswordAccessTokenTableName = "ResetPasswordAccessToken";
 
             builder.Register(c =>
                     new PayAuthRepository(AzureTableStorage<PayAuthEntity>.Create(
@@ -68,6 +75,15 @@ namespace Lykke.Service.PayAuth.Modules
                         _settings.ConnectionString(x => x.Db.DataConnString),
                         employeeCredentialsTableName, c.Resolve<ILogFactory>())))
                 .As<IEmployeeCredentialsRepository>()
+                .SingleInstance();
+
+            builder.Register(c => new ResetPasswordAccessTokenRepository(
+                    AzureTableStorage<ResetPasswordAccessTokenEntity>.Create(
+                        _settings.ConnectionString(x => x.Db.DataConnString), resetPasswordAccessTokenTableName,
+                        c.Resolve<ILogFactory>()),
+                    AzureTableStorage<AzureIndex>.Create(_settings.ConnectionString(x => x.Db.DataConnString),
+                        resetPasswordAccessTokenTableName, c.Resolve<ILogFactory>())))
+                .As<IResetPasswordAccessTokenRepository>()
                 .SingleInstance();
         }
     }
