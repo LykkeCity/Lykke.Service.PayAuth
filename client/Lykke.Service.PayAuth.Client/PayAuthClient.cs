@@ -89,6 +89,11 @@ namespace Lykke.Service.PayAuth.Client
             return _runner.RunAsync(() => _employeesApi.UpdatePinHashAsync(model));
         }
 
+        public Task<ResetPasswordTokenModel> CreateResetPasswordTokenAsync(CreateResetPasswordTokenRequest request)
+        {
+            return _runner.RunAsync(() => _resetPasswordApi.CreateAsync(request));
+        }
+
         public Task<ResetPasswordTokenModel> GetResetPasswordTokenByPublicIdAsync(string publicId)
         {
             return _runner.RunAsync(() => _resetPasswordApi.GetByPublicIdAsync(publicId));

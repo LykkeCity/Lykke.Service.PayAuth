@@ -77,6 +77,13 @@ namespace Lykke.Service.PayAuth.Client
         Task UpdatePinHashAsync(UpdatePinHashModel model);
 
         /// <summary>
+        /// Creates new reset password token for employee
+        /// </summary>
+        /// <param name="request">Request details</param>
+        /// <returns></returns>
+        Task<ResetPasswordTokenModel> CreateResetPasswordTokenAsync(CreateResetPasswordTokenRequest request);
+
+        /// <summary>
         /// Returns reset password access token details
         /// </summary>
         /// <param name="publicId"></param>

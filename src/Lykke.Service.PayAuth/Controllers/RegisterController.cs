@@ -5,8 +5,8 @@ using AutoMapper;
 using JetBrains.Annotations;
 using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.PayAuth.Core.Services;
-using Lykke.Service.PayAuth.Filters;
 using Lykke.Service.PayAuth.Models;
+using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 

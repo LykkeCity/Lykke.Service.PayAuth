@@ -10,8 +10,8 @@ using Lykke.Common.Log;
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Core.Services;
 using Lykke.Service.PayAuth.Core.Utils;
-using Lykke.Service.PayAuth.Filters;
 using Lykke.Service.PayAuth.Models.Employees;
+using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
