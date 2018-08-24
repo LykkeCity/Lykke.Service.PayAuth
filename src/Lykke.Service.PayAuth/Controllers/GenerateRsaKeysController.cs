@@ -12,6 +12,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Lykke.Service.PayAuth.Models;
 using LykkePay.Common.Validation;
 using Lykke.Service.PayAuth.Models.GenerateRsaKeys;
+using JetBrains.Annotations;
 
 namespace Lykke.Service.PayAuth.Controllers
 {
@@ -23,12 +24,12 @@ namespace Lykke.Service.PayAuth.Controllers
         private readonly ILog _log;
 
         public GenerateRsaKeysController(
-            ISecurityHelper securityHelper,
-            IPayAuthService payAuthService,
-            ILogFactory logFactory)
+            [NotNull] ISecurityHelper securityHelper,
+            [NotNull] IPayAuthService payAuthService,
+            [NotNull] ILogFactory logFactory)
         {
-            _securityHelper = securityHelper;
-            _payAuthService = payAuthService;
+            _securityHelper = securityHelper ?? throw new ArgumentNullException(nameof(securityHelper));
+            _payAuthService = payAuthService ?? throw new ArgumentNullException(nameof(payAuthService));
             _log = logFactory.CreateLog(this);
         }
 
