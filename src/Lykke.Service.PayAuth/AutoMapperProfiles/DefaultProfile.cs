@@ -2,6 +2,7 @@
 using Lykke.Service.PayAuth.Core.Domain;
 using Lykke.Service.PayAuth.Models;
 using Lykke.Service.PayAuth.Models.Employees;
+using Lykke.Service.PayAuth.Core;
 
 namespace Lykke.Service.PayAuth.AutoMapperProfiles
 {
@@ -9,7 +10,12 @@ namespace Lykke.Service.PayAuth.AutoMapperProfiles
     {
         public DefaultProfile()
         {
-            CreateMap<PayAuthModel, Core.Domain.PayAuth>();
+            CreateMap<PayAuthModel, Core.Domain.PayAuth>(MemberList.Destination)
+                .ForMember(dest => dest.SystemId, opt => opt.NullSubstitute(LykkePayConstants.DefaultSystemId));
+
+            CreateMap<UpdateApiKeyModel, Core.Domain.PayAuth>(MemberList.Destination)
+                .ForMember(dest => dest.SystemId, opt => opt.UseValue(LykkePayConstants.DefaultSystemId))
+                .ForMember(dest => dest.Certificate, opt => opt.Ignore());
 
             CreateMap<RegisterModel, EmployeeCredentials>(MemberList.Destination)
                 .ForMember(dest => dest.Salt, opt => opt.Ignore())

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lykke.Service.PayAuth.Client.Models.Employees;
 using System.Threading;
+using Lykke.Service.PayAuth.Client.Models.GenerateRsaKeys;
 
 namespace Lykke.Service.PayAuth.Client
 {
@@ -16,6 +17,16 @@ namespace Lykke.Service.PayAuth.Client
         /// <param name="request">The registration details.</param>
         /// <param name="cancellationToken">The cancellation token</param>
         Task RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Updates api key
+        /// </summary>
+        Task UpdateApiKeyAsync(UpdateApiKeyRequest request);
+
+        /// <summary>
+        /// Generates rsa keys
+        /// </summary>
+        Task<GenerateRsaKeysResponse> GenerateRsaKeysAsync(GenerateRsaKeysRequest request);
 
         /// <summary>
         /// Validates signature

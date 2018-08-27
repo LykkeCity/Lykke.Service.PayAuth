@@ -18,7 +18,28 @@ namespace Lykke.Service.PayAuth.AzureRepositories
         {
             var newItem = PayAuthEntity.ByClientId.Create(payauth);
 
-            await _tableStorage.InsertAsync(newItem);
+            await _tableStorage.InsertOrMergeAsync(newItem);
+        }
+
+        public async Task UpdateAsync(IPayAuth payauth)
+        {
+            await _tableStorage.MergeAsync(
+                PayAuthEntity.ByClientId.GeneratePartitionKey(payauth.ClientId),
+                PayAuthEntity.ByClientId.GenerateRowKey(payauth.SystemId),
+                entity =>
+            {
+                if (!string.IsNullOrEmpty(payauth.ApiKey))
+                {
+                    entity.ApiKey = payauth.ApiKey;
+                }
+
+                if (!string.IsNullOrEmpty(payauth.Certificate))
+                {
+                    entity.Certificate = payauth.Certificate;
+                }
+
+                return entity;
+            });
         }
 
         public async Task<IPayAuth> GetAsync(string clientId, string systemId)

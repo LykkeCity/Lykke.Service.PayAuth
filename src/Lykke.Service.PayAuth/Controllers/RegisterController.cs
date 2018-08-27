@@ -16,6 +16,7 @@ namespace Lykke.Service.PayAuth.Controllers
     public class RegisterController : Controller
     {
         private readonly IPayAuthService _payAuthService;
+
         public RegisterController(
             [NotNull] IPayAuthService payAuthService)
         {
@@ -25,10 +26,9 @@ namespace Lykke.Service.PayAuth.Controllers
         /// <summary>
         /// Registers new client in the system
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request">Model to create new pay auth for merchant</param>
         [HttpPost]
-        [SwaggerOperation("Register")]
+        [SwaggerOperation(nameof(Register))]
         [ValidateModel]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
