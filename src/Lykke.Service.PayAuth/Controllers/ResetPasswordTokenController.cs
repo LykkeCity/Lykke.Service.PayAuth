@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -70,7 +71,8 @@ namespace Lykke.Service.PayAuth.Controllers
         [SwaggerOperation(nameof(GetByPublicId))]
         [ProducesResponseType(typeof(ResetPasswordAccessTokenResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetByPublicId(string publicId)
+        [ValidateModel]
+        public async Task<IActionResult> GetByPublicId([Required, RowKey] string publicId)
         {
             ResetPasswordAccessToken token = await _accessTokenService.GetByPublicIdAsync(publicId);
 
@@ -93,7 +95,8 @@ namespace Lykke.Service.PayAuth.Controllers
         [ProducesResponseType(typeof(ResetPasswordAccessTokenResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Redeem(string publicId)
+        [ValidateModel]
+        public async Task<IActionResult> Redeem([Required, RowKey] string publicId)
         {
             try
             {

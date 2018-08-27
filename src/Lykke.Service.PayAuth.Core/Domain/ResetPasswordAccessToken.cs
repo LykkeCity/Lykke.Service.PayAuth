@@ -23,10 +23,12 @@ namespace Lykke.Service.PayAuth.Core.Domain
         {
             string newId = StringUtils.GenerateId();
 
+            
+
             return new ResetPasswordAccessToken
             {
                 Id = newId,
-                PublicId = Convert.ToBase64String(SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(newId))),
+                PublicId = SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(newId)).ToHexString(),
                 EmployeeId = employeeId,
                 MerchantId = merchantId,
                 ExpiresOn = expiration,
