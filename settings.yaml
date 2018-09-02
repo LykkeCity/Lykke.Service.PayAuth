@@ -8,6 +8,14 @@
         types: [AzureTableStorage,Tag]
     ResetPasswordAccessTokenExpiration:
       settings-key: PayAuthService-ResetPasswordAccessTokenExpiration
+    Cqrs:
+      RabbitMqConnectionString:
+        settings-key: SagasRabbitMqConnStr
+        types: [RabbitMq]
+      ChaosKitty:
+        StateOfChaos: 0.2
+    ResetPasswordUrlTemplate:
+      settings-key: LykkePayResetPasswordUrlTemplate
   SlackNotifications:
     AzureQueue:
       ConnectionString:

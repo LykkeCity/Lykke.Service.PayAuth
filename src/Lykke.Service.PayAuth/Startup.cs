@@ -66,7 +66,7 @@ namespace Lykke.Service.PayAuth
 
                 var builder = new ContainerBuilder();
 
-                var appSettings = Configuration.LoadSettings<AppSettings>();
+                var appSettings = Configuration.LoadSettings<AppSettings>(opt => { });
                 _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient?.MonitoringServiceUrl;
 
                 services.AddLykkeLogging(
@@ -76,6 +76,10 @@ namespace Lykke.Service.PayAuth
                     appSettings.CurrentValue.SlackNotifications.AzureQueue.QueueName);
 
                 builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.PayAuthService)));
+
+                builder.RegisterModule(new CqrsModule(
+                    appSettings.Nested(x => x.PayAuthService.Cqrs), 
+                    appSettings.CurrentValue.PayAuthService.ResetPasswordUrlTemplate));
 
                 builder.Populate(services);
 
