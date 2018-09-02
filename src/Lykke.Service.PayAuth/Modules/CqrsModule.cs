@@ -71,49 +71,53 @@ namespace Lykke.Service.PayAuth.Modules
             });
 
             builder.Register(ctx => new CqrsEngine(
-                ctx.Resolve<ILogFactory>(),
-                ctx.Resolve<IDependencyResolver>(),
-                ctx.Resolve<MessagingEngine>(),
-                new DefaultEndpointProvider(),
-                true,
-                Register.DefaultEndpointResolver(new RabbitMqConventionEndpointResolver(
-                    "RabbitMq",
-                    Messaging.Serialization.SerializationFormat.ProtoBuf,
-                    environment: "lykke")),
+                    ctx.Resolve<ILogFactory>(),
+                    ctx.Resolve<IDependencyResolver>(),
+                    ctx.Resolve<MessagingEngine>(),
+                    new DefaultEndpointProvider(),
+                    true,
+                    Register.DefaultEndpointResolver(new RabbitMqConventionEndpointResolver(
+                        "RabbitMq",
+                        Messaging.Serialization.SerializationFormat.ProtoBuf,
+                        environment: "lykke")),
 
-                Register.Saga<RegisterEmployeeCredentialsSaga>(nameof(RegisterEmployeeCredentialsSaga))
-                    .ListeningEvents(
-                        typeof(EmployeeRegisteredEvent),
-                        typeof(EmployeeUpdatedEvent),
-                        typeof(EmployeeCredentialsRegisteredEvent),
-                        typeof(EmployeeCredentialsUpdatedEvent))
-                    .From(EmployeeRegistrationBoundedContext.Name)
-                    .On(EventsRoute)
-                    .PublishingCommands(
-                        typeof(RegisterEmployeeCredentialsCommand),
-                        typeof(UpdateEmployeeCredentialsCommand),
-                        typeof(GeneratePasswordResetTokenCommand))
-                    .To(EmployeeRegistrationBoundedContext.Name)
-                    .With(CommandsRoute),
+                    Register.Saga<RegisterEmployeeCredentialsSaga>(nameof(RegisterEmployeeCredentialsSaga))
+                        .ListeningEvents(
+                            typeof(EmployeeRegisteredEvent),
+                            typeof(EmployeeUpdatedEvent),
+                            typeof(EmployeeCredentialsRegisteredEvent),
+                            typeof(EmployeeCredentialsUpdatedEvent))
+                        .From(EmployeeRegistrationBoundedContext.Name)
+                        .On(EventsRoute)
+                        .PublishingCommands(
+                            typeof(RegisterEmployeeCredentialsCommand),
+                            typeof(UpdateEmployeeCredentialsCommand),
+                            typeof(GeneratePasswordResetTokenCommand))
+                        .To(EmployeeRegistrationBoundedContext.Name)
+                        .With(CommandsRoute),
 
-                Register.BoundedContext(EmployeeRegistrationBoundedContext.Name)
-                    .ListeningCommands(typeof(RegisterEmployeeCredentialsCommand))
-                    .On(CommandsRoute)
-                    .WithCommandsHandler<RegisterEmployeeCredentialsCommandHandler>()
-                    .PublishingEvents(typeof(EmployeeCredentialsRegisteredEvent))
-                    .With(EventsRoute)
+                    Register.BoundedContext(EmployeeRegistrationBoundedContext.Name)
+                        .ListeningCommands(typeof(RegisterEmployeeCredentialsCommand))
+                        .On(CommandsRoute)
+                        .WithCommandsHandler<RegisterEmployeeCredentialsCommandHandler>()
+                        .PublishingEvents(typeof(EmployeeCredentialsRegisteredEvent))
+                        .With(EventsRoute)
 
-                    .ListeningCommands(typeof(GeneratePasswordResetTokenCommand))
-                    .On(CommandsRoute)
-                    .WithCommandsHandler<GeneratePasswordResetTokenCommandHandler>()
-                    .PublishingEvents(typeof(EmployeeRegistrationCompletedEvent), typeof(EmployeeUpdateCompletedEvent))
-                    .With(EventsRoute)
+                        .ListeningCommands(typeof(GeneratePasswordResetTokenCommand))
+                        .On(CommandsRoute)
+                        .WithCommandsHandler<GeneratePasswordResetTokenCommandHandler>()
+                        .PublishingEvents(typeof(EmployeeRegistrationCompletedEvent),
+                            typeof(EmployeeUpdateCompletedEvent))
+                        .With(EventsRoute)
 
-                    .ListeningCommands(typeof(UpdateEmployeeCredentialsCommand))
-                    .On(CommandsRoute)
-                    .WithCommandsHandler<UpdateEmployeeCredentialsCommandHandler>()
-                    .PublishingEvents(typeof(EmployeeUpdateCompletedEvent), typeof(EmployeeCredentialsUpdatedEvent))
-                    .With(EventsRoute)));
+                        .ListeningCommands(typeof(UpdateEmployeeCredentialsCommand))
+                        .On(CommandsRoute)
+                        .WithCommandsHandler<UpdateEmployeeCredentialsCommandHandler>()
+                        .PublishingEvents(typeof(EmployeeUpdateCompletedEvent), typeof(EmployeeCredentialsUpdatedEvent))
+                        .With(EventsRoute)))
+                .As<ICqrsEngine>()
+                .SingleInstance()
+                .AutoActivate();
         }
 
         private void RegisterChaosKitty(ContainerBuilder builder)
