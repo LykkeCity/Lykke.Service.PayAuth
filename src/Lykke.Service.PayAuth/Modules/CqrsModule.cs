@@ -6,12 +6,12 @@ using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
 using Lykke.Messaging;
 using Lykke.Messaging.RabbitMq;
+using Lykke.Service.PayAuth.Contract;
 using Lykke.Service.PayAuth.Contract.Commands;
 using Lykke.Service.PayAuth.Contract.Events;
 using Lykke.Service.PayAuth.Core.Settings.ServiceSettings;
 using Lykke.Service.PayAuth.Worklflow.CommandHandlers;
 using Lykke.Service.PayAuth.Worklflow.Sagas;
-using Lykke.Service.PayInvoice.Contract;
 using Lykke.Service.PayInvoice.Contract.Events;
 using Lykke.SettingsReader;
 
@@ -22,8 +22,7 @@ namespace Lykke.Service.PayAuth.Modules
         private readonly IReloadingManager<CqrsSettings> _settings;
         private readonly string _resetPasswordUrlTemplate;
 
-        private const string CommandsRoute = "commands";
-        private const string EventsRoute = "events";
+        private static readonly string SelfContext = EmployeeCredentialsRegistrationBoundedContext.Name;
 
         public CqrsModule(IReloadingManager<CqrsSettings> settings, string resetPasswordUrlTemplate)
         {
@@ -33,6 +32,8 @@ namespace Lykke.Service.PayAuth.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            const string defaultRoute = "self";
+
             RegisterChaosKitty(builder);
 
             builder.Register(context => new AutofacDependencyResolver(context))
@@ -40,7 +41,7 @@ namespace Lykke.Service.PayAuth.Modules
                 .SingleInstance();
 
             var rabbitSettings = new RabbitMQ.Client.ConnectionFactory
-                { Uri = _settings.CurrentValue.RabbitMqConnectionString };
+                {Uri = _settings.CurrentValue.RabbitMqConnectionString};
 
             builder.RegisterType<RegisterEmployeeCredentialsSaga>();
 
@@ -81,40 +82,46 @@ namespace Lykke.Service.PayAuth.Modules
                         Messaging.Serialization.SerializationFormat.ProtoBuf,
                         environment: "lykke")),
 
-                    Register.Saga<RegisterEmployeeCredentialsSaga>(nameof(RegisterEmployeeCredentialsSaga))
+                    Register.Saga<RegisterEmployeeCredentialsSaga>($"{SelfContext}.saga")
                         .ListeningEvents(
-                            typeof(EmployeeRegisteredEvent),
-                            typeof(EmployeeUpdatedEvent),
+                            typeof(EmployeeRegisteredEvent), 
+                            typeof(EmployeeUpdatedEvent))
+                        .From("lykkepay-employee-registration")
+                        .On("payauth")
+                        .ListeningEvents(
                             typeof(EmployeeCredentialsRegisteredEvent),
                             typeof(EmployeeCredentialsUpdatedEvent))
-                        .From(EmployeeRegistrationBoundedContext.Name)
-                        .On(EventsRoute)
+                        .From(SelfContext)
+                        .On(defaultRoute)
                         .PublishingCommands(
                             typeof(RegisterEmployeeCredentialsCommand),
                             typeof(UpdateEmployeeCredentialsCommand),
                             typeof(GeneratePasswordResetTokenCommand))
-                        .To(EmployeeRegistrationBoundedContext.Name)
-                        .With(CommandsRoute),
+                        .To(SelfContext)
+                        .With("commands"),
 
-                    Register.BoundedContext(EmployeeRegistrationBoundedContext.Name)
+                    Register.BoundedContext(SelfContext)
                         .ListeningCommands(typeof(RegisterEmployeeCredentialsCommand))
-                        .On(CommandsRoute)
+                        .On(defaultRoute)
                         .WithCommandsHandler<RegisterEmployeeCredentialsCommandHandler>()
                         .PublishingEvents(typeof(EmployeeCredentialsRegisteredEvent))
-                        .With(EventsRoute)
+                        .With("events")
 
                         .ListeningCommands(typeof(GeneratePasswordResetTokenCommand))
-                        .On(CommandsRoute)
+                        .On(defaultRoute)
                         .WithCommandsHandler<GeneratePasswordResetTokenCommandHandler>()
-                        .PublishingEvents(typeof(EmployeeRegistrationCompletedEvent),
+                        .PublishingEvents(
+                            typeof(EmployeeRegistrationCompletedEvent),
                             typeof(EmployeeUpdateCompletedEvent))
-                        .With(EventsRoute)
+                        .With("events")
 
                         .ListeningCommands(typeof(UpdateEmployeeCredentialsCommand))
-                        .On(CommandsRoute)
+                        .On(defaultRoute)
                         .WithCommandsHandler<UpdateEmployeeCredentialsCommandHandler>()
-                        .PublishingEvents(typeof(EmployeeUpdateCompletedEvent), typeof(EmployeeCredentialsUpdatedEvent))
-                        .With(EventsRoute)))
+                        .PublishingEvents(
+                            typeof(EmployeeUpdateCompletedEvent), 
+                            typeof(EmployeeCredentialsUpdatedEvent))
+                        .With("events")))
                 .As<ICqrsEngine>()
                 .SingleInstance()
                 .AutoActivate();
