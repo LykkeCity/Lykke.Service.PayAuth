@@ -1,0 +1,23 @@
+PayAuthService: 
+    Db:
+        LogsConnString:
+            settings-key: PayAuthService-LogsConnString
+            types: [ AzureTableStorage, Tag ]
+        DataConnString: 
+            settings-key: PayAuthService-DataConnString
+            types: [ AzureTableStorage, Tag ]
+    ResetPasswordAccessTokenExpiration:
+        settings-key: PayAuthService-ResetPasswordAccessTokenExpiration
+
+MonitoringServiceClient:
+  MonitoringServiceUrl:
+    settings-key: MonitoringServiceUrl
+
+SlackNotifications:
+  AzureQueue:
+    ConnectionString:
+      settings-key: SlackNotificationsConnString
+      types: [ AzureTableStorage ]
+    QueueName:
+      settings-key: SlackQueueName
+      types: [ AzureTableStorage ]
