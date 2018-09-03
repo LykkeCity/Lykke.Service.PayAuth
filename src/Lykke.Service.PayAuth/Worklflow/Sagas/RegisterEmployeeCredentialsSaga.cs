@@ -2,9 +2,9 @@
 using JetBrains.Annotations;
 using Lykke.Common.Chaos;
 using Lykke.Cqrs;
+using Lykke.Service.PayAuth.Contract;
 using Lykke.Service.PayAuth.Contract.Commands;
 using Lykke.Service.PayAuth.Contract.Events;
-using Lykke.Service.PayInvoice.Contract;
 using Lykke.Service.PayInvoice.Contract.Events;
 
 namespace Lykke.Service.PayAuth.Worklflow.Sagas
@@ -28,7 +28,7 @@ namespace Lykke.Service.PayAuth.Worklflow.Sagas
                 EmployeeId = evt.Id,
                 MerchantId = evt.MerchantId,
                 Password = evt.Password
-            }, EmployeeRegistrationBoundedContext.Name);
+            }, EmployeeCredentialsRegistrationBoundedContext.Name);
 
             _chaosKitty.Meow("Issue with RabbitMq when publishing RegisterEmployeeCredentialsCommand");
         }
@@ -41,7 +41,7 @@ namespace Lykke.Service.PayAuth.Worklflow.Sagas
                 MerchantId = evt.MerchantId,
                 EmployeeId = evt.EmployeeId,
                 IsNewEmployee = true
-            }, EmployeeRegistrationBoundedContext.Name);
+            }, EmployeeCredentialsRegistrationBoundedContext.Name);
 
             _chaosKitty.Meow("Issue with RabbitMq when publishing GeneratePasswordResetTokenCommand");
         }
@@ -55,7 +55,7 @@ namespace Lykke.Service.PayAuth.Worklflow.Sagas
                 EmployeeId = evt.Id,
                 MerchantId = evt.MerchantId,
                 Password = evt.Password
-            }, EmployeeRegistrationBoundedContext.Name);
+            }, EmployeeCredentialsRegistrationBoundedContext.Name);
 
             _chaosKitty.Meow("Issue with RabbitMq when publishing UpdateEmployeeCredentialsCommand");
         }
@@ -68,7 +68,7 @@ namespace Lykke.Service.PayAuth.Worklflow.Sagas
                 MerchantId = evt.MerchantId,
                 EmployeeId = evt.EmployeeId,
                 IsNewEmployee = false
-            }, EmployeeRegistrationBoundedContext.Name);
+            }, EmployeeCredentialsRegistrationBoundedContext.Name);
 
             _chaosKitty.Meow("Issue with RabbitMq when publishing GeneratePasswordResetTokenCommand");
         }
