@@ -8,10 +8,12 @@ PayAuthService:
       types: [ AzureTableStorage, Tag ]
   ResetPasswordAccessTokenExpiration:
     settings-key: PayAuthService-ResetPasswordAccessTokenExpiration
+    types: [ Tag ]
 
 MonitoringServiceClient:
   MonitoringServiceUrl:
     settings-key: MonitoringServiceUrl
+    types: [ Tag ]
 
 SlackNotifications:
   AzureQueue:
