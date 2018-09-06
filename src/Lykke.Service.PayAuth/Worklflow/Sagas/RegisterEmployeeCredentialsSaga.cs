@@ -1,6 +1,9 @@
 ﻿using System;
+using Common;
+using Common.Log;
 using JetBrains.Annotations;
 using Lykke.Common.Chaos;
+using Lykke.Common.Log;
 using Lykke.Cqrs;
 using Lykke.Service.PayAuth.Contract;
 using Lykke.Service.PayAuth.Contract.Commands;
@@ -13,10 +16,12 @@ namespace Lykke.Service.PayAuth.Worklflow.Sagas
     public class RegisterEmployeeCredentialsSaga
     {
         private readonly IChaosKitty _chaosKitty;
+        private readonly ILog _log;
 
-        public RegisterEmployeeCredentialsSaga([NotNull] IChaosKitty chaosKitty)
+        public RegisterEmployeeCredentialsSaga([NotNull] IChaosKitty chaosKitty, [NotNull] ILogFactory logFactory)
         {
             _chaosKitty = chaosKitty ?? throw new ArgumentNullException(nameof(chaosKitty));
+            _log = logFactory.CreateLog(this);
         }
 
         [UsedImplicitly]
@@ -49,6 +54,8 @@ namespace Lykke.Service.PayAuth.Worklflow.Sagas
         [UsedImplicitly]
         private void Handle(EmployeeUpdatedEvent evt, ICommandSender sender)
         {
+            _log.Info("Sending command UpdateEmployeeCredentialsCommand", $"Details: {evt.ToJson()}");
+
             sender.SendCommand(new UpdateEmployeeCredentialsCommand
             {
                 Email = evt.Email,
