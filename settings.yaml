@@ -9,6 +9,15 @@ PayAuthService:
   ResetPasswordAccessTokenExpiration:
     settings-key: PayAuthService-ResetPasswordAccessTokenExpiration
     types: [ Tag ]
+  Cqrs:
+    RabbitMqConnectionString:
+      settings-key: RabbitSagas
+      types: [ RabbitMq, Tag ]
+    ChaosKitty:
+      StateOfChaos: 0.2
+  ResetPasswordUrlTemplate:
+    settings-key: LykkePayResetPasswordUrlTemplate
+    types: [ Tag ]
 
 MonitoringServiceClient:
   MonitoringServiceUrl:
