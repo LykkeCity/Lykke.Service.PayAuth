@@ -23,9 +23,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
-    <PackageReference Include="Lykke.Common" Version="7.0.3" />
+    <PackageReference Include="Lykke.Common" Version="7.0.4" />
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.10.1" />
-    <PackageReference Include="Lykke.Logs" Version="5.2.0" />
+    <PackageReference Include="Lykke.Cqrs" Version="5.0.1" />
+    <PackageReference Include="Lykke.Logs" Version="6.0.0" />
+    <PackageReference Include="Lykke.Messaging.RabbitMq" Version="2.1.0" />
+    <PackageReference Include="Lykke.Service.PayInvoice.Contract" Version="1.0.2" />
     <PackageReference Include="Lykke.Service.Session" Version="1.0.33" />
     <PackageReference Include="Lykke.SettingsReader" Version="4.0.1" />
     <PackageReference Include="Lykke.SlackNotification.AzureQueue" Version="2.0.5" />
@@ -40,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Service.PayAuth.AzureRepositories\Lykke.Service.PayAuth.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Service.PayAuth.Contract\Lykke.Service.PayAuth.Contract.csproj" />
     <ProjectReference Include="..\Lykke.Service.PayAuth.Core\Lykke.Service.PayAuth.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.PayAuth.Services\Lykke.Service.PayAuth.Services.csproj" />
   </ItemGroup>
