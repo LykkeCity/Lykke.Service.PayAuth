@@ -18,6 +18,11 @@ PayAuthService:
   ResetPasswordUrlTemplate:
     settings-key: LykkePayResetPasswordUrlTemplate
     types: [ Tag ]
+
+MonitoringServiceClient:
+  MonitoringServiceUrl:
+    settings-key: MonitoringServiceUrl
+    types: [ Tag ]
 SlackNotifications:
   AzureQueue:
     ConnectionString:
