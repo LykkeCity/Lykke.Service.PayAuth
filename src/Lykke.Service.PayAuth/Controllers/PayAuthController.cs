@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -29,6 +30,32 @@ namespace Lykke.Service.PayAuth.Controllers
         {
             _payAuthService = payAuthService ?? throw new ArgumentNullException(nameof(payAuthService));
             _log = logFactory.CreateLog(this);
+        }
+
+        /// <summary>
+        /// Gets pay auth information
+        /// </summary>
+        /// <param name="merchantId">Merchant id</param>
+        [HttpGet]
+        [SwaggerOperation(nameof(GetPayAuthInformation))]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PayAuthInformationResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetPayAuthInformation([Required][RowKey] string merchantId)
+        {
+            try
+            {
+                var payAuth = await _payAuthService.GetAsync(merchantId, LykkePayConstants.DefaultSystemId);
+
+                return Ok(Mapper.Map<PayAuthInformationResponse>(payAuth));
+            }
+            catch (ClientNotFoundException e)
+            {
+                _log.Error(e, $"{e.Message}, request: {merchantId}");
+
+                return NotFound(ErrorResponse.Create(e.Message));
+            }
         }
 
         /// <summary>
