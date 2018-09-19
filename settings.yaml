@@ -14,7 +14,9 @@ PayAuthService:
       settings-key: RabbitSagas
       types: [ RabbitMq, Tag ]
     ChaosKitty:
-      StateOfChaos: 0.2
+      StateOfChaos:
+        settings-key: LykkePay-StateOfChaos
+        types: [ Tag ]
   ResetPasswordUrlTemplate:
     settings-key: LykkePayResetPasswordUrlTemplate
     types: [ Tag ]
