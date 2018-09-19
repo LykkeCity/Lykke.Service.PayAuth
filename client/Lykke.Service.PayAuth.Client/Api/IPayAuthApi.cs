@@ -11,6 +11,9 @@ namespace Lykke.Service.PayAuth.Client.Api
         [Post("/api/register")]
         Task RegisterAsync([Body] RegisterRequest request, CancellationToken cancellationToken = default(CancellationToken));
 
+        [Get("/api/payauth")]
+        Task<PayAuthInformationResponse> GetPayAuthInformationAsync(string merchantId);
+
         [Put("/api/payauth")]
         Task UpdateApiKeyAsync([Body] UpdateApiKeyRequest request);
 
