@@ -24,6 +24,12 @@ namespace Lykke.Service.PayAuth.Client
         Task UpdateApiKeyAsync(UpdateApiKeyRequest request);
 
         /// <summary>
+        /// Get pay auth information
+        /// </summary>
+        /// <param name="merchantId">Merchant id</param>
+        Task<PayAuthInformationResponse> GetPayAuthInformationAsync(string merchantId);
+
+        /// <summary>
         /// Generates rsa keys
         /// </summary>
         Task<GenerateRsaKeysResponse> GenerateRsaKeysAsync(GenerateRsaKeysRequest request);

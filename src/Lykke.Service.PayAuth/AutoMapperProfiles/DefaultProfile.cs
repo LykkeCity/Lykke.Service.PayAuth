@@ -31,6 +31,10 @@ namespace Lykke.Service.PayAuth.AutoMapperProfiles
 
             CreateMap<ResetPasswordAccessToken, ResetPasswordAccessTokenResponse>(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+
+            CreateMap<IPayAuth, PayAuthInformationResponse>(MemberList.Destination)
+                .ForMember(dest => dest.MerchantId, opt => opt.MapFrom(src => src.ClientId))
+                .ForMember(dest => dest.RsaPublicKey, opt => opt.MapFrom(src => src.Certificate));
         }
 
         public override string ProfileName => "Default profile";

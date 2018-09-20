@@ -50,6 +50,11 @@ namespace Lykke.Service.PayAuth.Client
             return _runner.RunAsync(() => _payAuthApi.RegisterAsync(request, cancellationToken));
         }
 
+        public Task<PayAuthInformationResponse> GetPayAuthInformationAsync(string merchantId)
+        {
+            return _runner.RunAsync(() => _payAuthApi.GetPayAuthInformationAsync(merchantId));
+        }
+
         public Task UpdateApiKeyAsync(UpdateApiKeyRequest request)
         {
             return _runner.RunAsync(() => _payAuthApi.UpdateApiKeyAsync(request));
