@@ -10,5 +10,6 @@
         public string PinCode { get; set; }
         public bool ForcePasswordUpdate { get; set; }
         public bool ForcePinUpdate { get; set; }
+        public bool ForceEmailConfirmation { get; set; }
     }
 }

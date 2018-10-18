@@ -61,7 +61,12 @@ namespace Lykke.Service.PayAuth
                     options.DefaultLykkeConfiguration("v1", "PayAuth API");
                 });
 
-                Mapper.Initialize(x => x.AddProfiles(GetType().Assembly));
+                Mapper.Initialize(cfg =>
+                {
+                    cfg.AddProfiles(GetType().Assembly);
+                    cfg.AddProfiles(typeof(Services.AutoMapperProfile));
+                });
+                
                 Mapper.Configuration.AssertConfigurationIsValid();
 
                 var builder = new ContainerBuilder();

@@ -122,7 +122,8 @@ namespace Lykke.Service.PayAuth.Controllers
                 MerchantId = employeeCredentials.MerchantId,
                 EmployeeId = employeeCredentials.EmployeeId,
                 ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate,
-                ForcePinUpdate = employeeCredentials.ForcePinUpdate
+                ForcePinUpdate = employeeCredentials.ForcePinUpdate,
+                ForceEmailConfirmation = employeeCredentials.ForceEmailConfirmation
             });
         }
 
@@ -169,6 +170,33 @@ namespace Lykke.Service.PayAuth.Controllers
             try
             {
                 await _employeeCredentialsService.EnforceCredentialsUpdateAsync(model.Email);
+            }
+            catch (InvalidOperationException e)
+            {
+                _log.Warning($"{e.Message}, request: {model.ToJson()}", e);
+
+                return BadRequest(ErrorResponse.Create(e.Message));
+            }
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Updates email confirmation attribute
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("confirmEmail")]
+        [SwaggerOperation(nameof(SetEmailConfirmed))]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> SetEmailConfirmed([FromBody] EmailConfirmedRequest model)
+        {
+            try
+            {
+                await _employeeCredentialsService.SetEmailConfirmedAsync(model.Email);
             }
             catch (InvalidOperationException e)
             {

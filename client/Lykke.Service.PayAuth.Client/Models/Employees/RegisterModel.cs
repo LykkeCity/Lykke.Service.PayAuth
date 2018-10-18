@@ -24,5 +24,10 @@
         /// Gets or sets a password.
         /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets an attribute of requiring the email confirmation
+        /// </summary>
+        public bool ForceEmailConfirmation { get; set; }
     }
 }

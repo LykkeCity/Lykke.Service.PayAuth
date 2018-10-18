@@ -17,5 +17,7 @@
         bool ForcePasswordUpdate { get; }
 
         bool ForcePinUpdate { get; }
+
+        bool ForceEmailConfirmation { get; }
     }
 }
