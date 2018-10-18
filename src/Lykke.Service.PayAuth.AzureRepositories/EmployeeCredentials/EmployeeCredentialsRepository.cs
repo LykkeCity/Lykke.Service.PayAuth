@@ -53,7 +53,7 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
             });
         }
 
-        public async Task<IEmployeeCredentials> UpdateEmailConfirmationAttributeAsync(string email)
+        public async Task<IEmployeeCredentials> SetEmailConfirmedAsync(string email)
         {
             var result = await _storage.MergeAsync(GetPartitionKey(email), GetRowKey(), entity =>
             {

@@ -151,7 +151,7 @@ namespace Lykke.Service.PayAuth.Services
 
         public async Task SetEmailConfirmedAsync(string email)
         {
-            var credentials = await _repository.UpdateEmailConfirmationAttributeAsync(email);
+            var credentials = await _repository.SetEmailConfirmedAsync(email);
 
             if (credentials == null)
                 throw new InvalidOperationException("Employee does not exist.");
