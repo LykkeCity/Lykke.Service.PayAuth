@@ -95,6 +95,11 @@ namespace Lykke.Service.PayAuth.Client
             return _runner.RunAsync(() => _employeesApi.EnforceCredentialsUpdateAsync(model));
         }
 
+        public Task SetEmailConfirmedAsync(EmailConfirmedRequest model)
+        {
+            return _runner.RunAsync(() => _employeesApi.SetEmailConfirmedAsync(model));
+        }
+
         public Task<ValidateResultModel> ValidatePinAsync(string email, string pin)
         {
             return _runner.RunAsync(() => _employeesApi.ValidatePinAsync(email, pin));

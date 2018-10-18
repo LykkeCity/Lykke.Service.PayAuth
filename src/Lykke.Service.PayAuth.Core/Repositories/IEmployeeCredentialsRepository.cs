@@ -8,6 +8,8 @@ namespace Lykke.Service.PayAuth.Core.Repositories
         Task<IEmployeeCredentials> GetAsync(string email);
         
         Task InsertOrReplaceAsync(IEmployeeCredentials credentials);
+
+        Task<IEmployeeCredentials> SetEmailConfirmedAsync(string email);
         
         Task DeleteAsync(string email);
     }

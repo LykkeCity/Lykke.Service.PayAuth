@@ -17,5 +17,7 @@ namespace Lykke.Service.PayAuth.Models.Employees
         
         [Required]
         public string Password { get; set; }
+
+        public bool ForceEmailConfirmation { get; set; }
     }
 }

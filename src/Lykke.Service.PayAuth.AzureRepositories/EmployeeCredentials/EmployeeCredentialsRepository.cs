@@ -30,7 +30,8 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
                 Salt = entity.Salt,
                 PinCode = entity.PinCode,
                 ForcePasswordUpdate = entity.ForcePasswordUpdate,
-                ForcePinUpdate = entity.ForcePinUpdate
+                ForcePinUpdate = entity.ForcePinUpdate,
+                ForceEmailConfirmation = entity.ForceEmailConfirmation
             };
         }
 
@@ -47,10 +48,22 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
                 Salt = credentials.Salt,
                 PinCode = credentials.PinCode,
                 ForcePasswordUpdate = credentials.ForcePasswordUpdate,
-                ForcePinUpdate = credentials.ForcePinUpdate
+                ForcePinUpdate = credentials.ForcePinUpdate,
+                ForceEmailConfirmation = credentials.ForceEmailConfirmation
             });
         }
-       
+
+        public async Task<IEmployeeCredentials> SetEmailConfirmedAsync(string email)
+        {
+            var result = await _storage.MergeAsync(GetPartitionKey(email), GetRowKey(), entity =>
+            {
+                entity.ForceEmailConfirmation = false;
+                return entity;
+            });
+
+            return result;
+        }
+
         public async Task DeleteAsync(string email)
         {
             await _storage.DeleteAsync(GetPartitionKey(email), GetRowKey());

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using AutoMapper;
 using Common;
 using Common.Log;
 using JetBrains.Annotations;
@@ -44,7 +45,8 @@ namespace Lykke.Service.PayAuth.Services
                 Salt = salt,
                 PinCode = null,
                 ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate,
-                ForcePinUpdate = employeeCredentials.ForcePinUpdate
+                ForcePinUpdate = employeeCredentials.ForcePinUpdate,
+                ForceEmailConfirmation = employeeCredentials.ForcePinUpdate
             });
 
             _log.Info("Employee credentials registered.",
@@ -72,7 +74,8 @@ namespace Lykke.Service.PayAuth.Services
                 Password = hash,
                 Salt = salt,
                 ForcePasswordUpdate = false,
-                ForcePinUpdate = false
+                ForcePinUpdate = false,
+                ForceEmailConfirmation = credentials.ForceEmailConfirmation
             });
 
             _log.Info("Employee credentials updated.",
@@ -89,17 +92,12 @@ namespace Lykke.Service.PayAuth.Services
             if (credentials == null)
                 throw new InvalidOperationException("Employee does not exist.");
 
-            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
-            {
-                MerchantId = credentials.MerchantId,
-                EmployeeId = credentials.EmployeeId,
-                Email = credentials.Email,
-                PinCode = credentials.PinCode,
-                Salt = credentials.Salt,
-                Password = hash,
-                ForcePasswordUpdate = false,
-                ForcePinUpdate = credentials.ForcePinUpdate
-            });
+            var newCredentials = Mapper.Map<EmployeeCredentials>(credentials);
+
+            newCredentials.Password = hash;
+            newCredentials.ForcePasswordUpdate = false;
+
+            await _repository.InsertOrReplaceAsync(newCredentials);
 
             _log.Info("Employee password updated.",
                 credentials.MerchantId
@@ -116,17 +114,12 @@ namespace Lykke.Service.PayAuth.Services
             if (credentials == null)
                 throw new InvalidOperationException("Employee does not exist.");
 
-            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
-            {
-                MerchantId = credentials.MerchantId,
-                EmployeeId = credentials.EmployeeId,
-                Email = credentials.Email,
-                ForcePasswordUpdate = credentials.ForcePasswordUpdate,
-                ForcePinUpdate = false,
-                Password = credentials.Password,
-                Salt = credentials.Salt,
-                PinCode = hash
-            });
+            var newCredentials = Mapper.Map<EmployeeCredentials>(credentials);
+
+            newCredentials.ForcePinUpdate = false;
+            newCredentials.PinCode = hash;
+
+            await _repository.InsertOrReplaceAsync(newCredentials);
 
             _log.Info("Employee pin updated.",
                 credentials.MerchantId
@@ -138,27 +131,33 @@ namespace Lykke.Service.PayAuth.Services
         public async Task EnforceCredentialsUpdateAsync(string email)
         {
             IEmployeeCredentials credentials = await _repository.GetAsync(email);
-
+            
             if (credentials == null)
                 throw new InvalidOperationException("Employee does not exist.");
 
-            await _repository.InsertOrReplaceAsync(new EmployeeCredentials
-            {
-                MerchantId = credentials.MerchantId,
-                EmployeeId = credentials.EmployeeId,
-                Email = credentials.Email,
-                Password = credentials.Password,
-                Salt = credentials.Salt,
-                PinCode = credentials.PinCode,
-                ForcePasswordUpdate = true,
-                ForcePinUpdate = true
-            });
+            var newCredentials = Mapper.Map<EmployeeCredentials>(credentials);
+
+            newCredentials.ForcePasswordUpdate = true;
+            newCredentials.ForcePinUpdate = true;
+
+            await _repository.InsertOrReplaceAsync(newCredentials);
 
             _log.Info("Employee first time login flag set.",
                 credentials.MerchantId
                     .ToContext(nameof(credentials.MerchantId))
                     .ToContext(nameof(credentials.EmployeeId), credentials.EmployeeId)
                     .ToContext(nameof(credentials.Email), credentials.Email.SanitizeEmail()));
+        }
+
+        public async Task SetEmailConfirmedAsync(string email)
+        {
+            var credentials = await _repository.SetEmailConfirmedAsync(email);
+
+            if (credentials == null)
+                throw new InvalidOperationException("Employee does not exist.");
+
+            _log.Info("Employee email confirmed, details: " +
+                      new {credentials.MerchantId, credentials.EmployeeId}.ToJson());
         }
 
         public async Task<IEmployeeCredentials> ValidatePasswordAsync(string email, string password)
