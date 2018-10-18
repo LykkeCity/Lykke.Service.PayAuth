@@ -1,15 +1,18 @@
 ﻿using Lykke.AzureStorage.Tables;
 using Lykke.AzureStorage.Tables.Entity.Annotation;
 using Lykke.AzureStorage.Tables.Entity.ValueTypesMerging;
+using Lykke.Service.PayAuth.Core.Domain;
 
 namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
 {
     [ValueTypeMergingStrategy(ValueTypeMergingStrategy.UpdateIfDirty)]
-    public class EmployeeCredentialsEntity : AzureTableEntity
+    public class EmployeeCredentialsEntity : AzureTableEntity, IEmployeeCredentials
     {
         private bool _forcePasswordUpdate;
 
         private bool _forcePinUpdate;
+
+        private bool _forceEmailConfirmation;
 
         public string EmployeeId { get; set; }
 
@@ -40,6 +43,16 @@ namespace Lykke.Service.PayAuth.AzureRepositories.EmployeeCredentials
             {
                 _forcePinUpdate = value;
                 MarkValueTypePropertyAsDirty(nameof(ForcePinUpdate));
+            }
+        }
+
+        public bool ForceEmailConfirmation
+        {
+            get => _forceEmailConfirmation;
+            set
+            {
+                _forceEmailConfirmation = value;
+                MarkValueTypePropertyAsDirty(nameof(ForceEmailConfirmation));
             }
         }
     }

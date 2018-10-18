@@ -27,7 +27,8 @@ namespace Lykke.Service.PayAuth.AutoMapperProfiles
                 .ForMember(dest => dest.Salt, opt => opt.Ignore())
                 .ForMember(dest => dest.PinCode, opt => opt.Ignore())
                 .ForMember(dest => dest.ForcePasswordUpdate, opt => opt.Ignore())
-                .ForMember(dest => dest.ForcePinUpdate, opt => opt.Ignore());
+                .ForMember(dest => dest.ForcePinUpdate, opt => opt.Ignore())
+                .ForMember(dest => dest.ForceEmailConfirmation, opt => opt.Ignore());
 
             CreateMap<ResetPasswordAccessToken, ResetPasswordAccessTokenResponse>(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));

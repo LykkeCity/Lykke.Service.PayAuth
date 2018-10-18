@@ -44,5 +44,13 @@
         /// Means that user's pin has to be changed
         /// </remarks>
         public bool ForcePinUpdate { get; set; }
+
+        /// <summary>
+        /// Gets or sets email confirmation flag
+        /// </summary>
+        /// <remarks>
+        /// Means that email should be confirmed
+        /// </remarks>
+        public bool ForceEmailConfirmation { get; set; }
     }
 }

@@ -15,6 +15,8 @@ namespace Lykke.Service.PayAuth.Core.Services
 
         Task EnforceCredentialsUpdateAsync(string email);
 
+        Task SetEmailConfirmedAsync(string email);
+
         Task<IEmployeeCredentials> ValidatePasswordAsync(string email, string password);
 
         Task<IEmployeeCredentials> ValidatePinAsync(string email, string pin);

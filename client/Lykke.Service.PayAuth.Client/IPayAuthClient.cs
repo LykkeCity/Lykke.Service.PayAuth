@@ -79,6 +79,13 @@ namespace Lykke.Service.PayAuth.Client
         Task EnforceCredentialsUpdateAsync(EnforceCredentialsUpdateModel model);
 
         /// <summary>
+        /// Updates email confirmation attribute
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task SetEmailConfirmedAsync(EmailConfirmedRequest model);
+
+        /// <summary>
         /// Validates employee pin
         /// </summary>
         /// <param name="email">The employee email.</param>
