@@ -46,7 +46,7 @@ namespace Lykke.Service.PayAuth.Services
                 PinCode = null,
                 ForcePasswordUpdate = employeeCredentials.ForcePasswordUpdate,
                 ForcePinUpdate = employeeCredentials.ForcePinUpdate,
-                ForceEmailConfirmation = employeeCredentials.ForcePinUpdate
+                ForceEmailConfirmation = employeeCredentials.ForceEmailConfirmation
             });
 
             _log.Info("Employee credentials registered.",
